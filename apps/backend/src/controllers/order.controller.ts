@@ -48,7 +48,7 @@ export const createOrder = async (req: Request, res: Response) => {
     const orderItemsData: any[] = [];
 
     // Begin a Prisma Transaction
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx: any) => {
       for (const item of items) {
         const variant = await tx.productVariant.findUnique({
           where: { id: item.id }, // item.id is variantId from frontend
