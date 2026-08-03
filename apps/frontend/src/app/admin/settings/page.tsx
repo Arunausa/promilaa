@@ -15,6 +15,7 @@ type SettingsType = {
   shippingOutsideDhaka: string;
   announcementEnabled: boolean;
   announcementText: string;
+  fraudbdApiKey: string;
   steadfastApiKey: string;
   steadfastSecretKey: string;
   pathaoClientId: string;
@@ -81,6 +82,7 @@ export default function AdminSettingsPage() {
     shippingOutsideDhaka: "150",
     announcementEnabled: true,
     announcementText: "🌸 ক্যাশ অন ডেলিভারিতে শপিং করুন - সারা বাংলাদেশে হোম ডেলিভারি! 🌸",
+    fraudbdApiKey: "6f5a0bfcc142b07190191e2bc8b97c53c24e8f3a6ad0ed8ea1a33b7c400163e4",
     steadfastApiKey: "",
     steadfastSecretKey: "",
     pathaoClientId: "",
@@ -112,7 +114,7 @@ export default function AdminSettingsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Store & System Settings</h1>
-          <p className="text-xs text-slate-500 mt-1">শপের জেনারেল সেটিংস, কুরিয়ার এপিআই কি ও ডেলিভারি চার্জ ব্যবস্থাপনা</p>
+          <p className="text-xs text-slate-500 mt-1">শপের জেনারেল সেটিংস, ফ্রড চেক এপিআই কি ও কুরিয়ার তথ্য ব্যবস্থাপনা</p>
         </div>
 
         {saved && (
@@ -130,9 +132,9 @@ export default function AdminSettingsPage() {
             <Lock className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="font-bold text-sm text-amber-400">এপিআই সিকিউরিটি ও এনক্রিপশন সিস্টেম (Encrypted Storage)</h3>
+            <h3 className="font-bold text-sm text-amber-400">এপিআই সিকিউরিটি ও এনক্রিপশন সিস্টেম (Encrypted Admin Storage)</h3>
             <p className="text-xs text-slate-300 leading-relaxed mt-1">
-              আপনার কুরিয়ার (Steadfast, Pathao, RedX) এর ফ্রড চেক API Keys এবং পাসওয়ার্ড সরাসরি Vercel Serverless Encrypted Environment এ সংরক্ষিত হয়। কোনো কাস্টমার বা থার্ড পার্টি ব্রাউজার থেকে আপনার সিক্রেট কি এক্সেস করতে পারবে না।
+              আপনার ফ্রড চেক API Keys (FraudBD, Steadfast, Pathao, RedX) এডমিন প্যানেলের মাধ্যমে সুরক্ষিত থাকে। যখনই আপনি নতুন কুরিয়ার একাউন্ট করবেন, এডমিন সেটিংস প্যানেল থেকে এপিআই কী ও সিক্রেট পাসওয়ার্ড পরিবর্তন করতে পারবেন।
             </p>
           </div>
         </div>
@@ -142,14 +144,32 @@ export default function AdminSettingsPage() {
           <SectionTitle 
             icon={ShieldCheck} 
             title="Courier Fraud Checker API Credentials (কুরিয়ার এপিআই সেটিংস)" 
-            subtitle="Steadfast, Pathao বা RedX মার্চেন্ট প্যানেল থেকে এপিআই কী এনে এখানে দিন"
+            subtitle="FraudBD বা Steadfast/Pathao মার্চেন্ট প্যানেল থেকে এপিআই কী এনে এখানে দিন"
           />
 
           <div className="space-y-6">
+            {/* FraudBD API (Active Primary Engine) */}
+            <div className="p-4 bg-amber-50/50 border border-amber-200 rounded-xl space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="font-bold text-xs uppercase tracking-wider text-amber-900 flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span> FraudBD Courier Check API (https://fraudbd.com)
+                </h4>
+                <span className="text-[10px] bg-amber-200 text-amber-900 px-2.5 py-0.5 rounded-full font-bold">Active Engine</span>
+              </div>
+              <Field 
+                label="FraudBD API Key" 
+                name="fraudbdApiKey" 
+                placeholder="6f5a0bfcc142b07190191e2bc8b97c53c24e8f3a6ad0ed8ea1a33b7c400163e4" 
+                type="password" 
+                value={settings.fraudbdApiKey} 
+                onChange={handleChange} 
+              />
+            </div>
+
             {/* Steadfast */}
             <div className="p-4 bg-slate-50 border rounded-xl space-y-3">
               <h4 className="font-bold text-xs uppercase tracking-wider text-slate-800 flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Steadfast Courier Fraud Checker API
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Steadfast Courier Fraud Checker API (Optional)
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Field label="Steadfast API Key" name="steadfastApiKey" placeholder="st_live_xxxxxxxxx" value={settings.steadfastApiKey} onChange={handleChange} />
@@ -160,7 +180,7 @@ export default function AdminSettingsPage() {
             {/* Pathao */}
             <div className="p-4 bg-slate-50 border rounded-xl space-y-3">
               <h4 className="font-bold text-xs uppercase tracking-wider text-slate-800 flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-500"></span> Pathao Courier Fraud Checker API
+                <span className="w-2.5 h-2.5 rounded-full bg-red-500"></span> Pathao Courier Fraud Checker API (Optional)
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Field label="Pathao Client ID" name="pathaoClientId" placeholder="client_id_xxxx" value={settings.pathaoClientId} onChange={handleChange} />
@@ -173,7 +193,7 @@ export default function AdminSettingsPage() {
             {/* RedX */}
             <div className="p-4 bg-slate-50 border rounded-xl space-y-3">
               <h4 className="font-bold text-xs uppercase tracking-wider text-slate-800 flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-rose-500"></span> RedX Courier API
+                <span className="w-2.5 h-2.5 rounded-full bg-rose-500"></span> RedX Courier API (Optional)
               </h4>
               <Field label="RedX Access Token" name="redxApiToken" placeholder="redx_bearer_token_xxxx" type="password" value={settings.redxApiToken} onChange={handleChange} />
             </div>
