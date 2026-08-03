@@ -30,7 +30,7 @@ export default function MobileNav() {
         {/* Header */}
         <div className="p-5 border-b bg-slate-900 text-white flex items-center justify-between">
           <div>
-            <span className="text-[10px] uppercase tracking-widest text-slate-400 block font-bold">Women's Fashion</span>
+            <span className="text-[10px] uppercase tracking-widest text-slate-400 block font-bold">Women&apos;s Fashion</span>
             <span className="text-xl font-bold tracking-tighter">PROMILAA</span>
           </div>
         </div>

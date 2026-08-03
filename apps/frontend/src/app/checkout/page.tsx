@@ -177,7 +177,7 @@ export default function CheckoutPage() {
               <div key={item.id} className="flex justify-between items-center text-sm">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-white rounded border overflow-hidden">
-                    <img src={item.image} className="w-full h-full object-cover" />
+                    <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                   </div>
                   <div>
                     <p className="font-medium">{item.name}</p>
