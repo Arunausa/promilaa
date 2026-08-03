@@ -10,7 +10,7 @@ const getRedisClient = () => {
   if (url && token) {
     try {
       return new Redis({ url, token });
-    } catch (e) {
+    } catch {
       console.warn('[RedisCache] Failed to initialize Upstash Redis instance, falling back to In-Memory cache.');
     }
   }
