@@ -193,7 +193,8 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
       }
     });
 
-    const resetUrl = `http://localhost:3000/reset-password?token=${resetToken}&email=${email}`;
+    const frontendUrl = process.env.FRONTEND_URL || 'https://promilaa.vercel.app';
+    const resetUrl = `${frontendUrl}/reset-password?token=${resetToken}&email=${email}`;
     
     // TODO: Nodemailer setup. For now, log it.
     console.log(`[EMAIL MOCK] Password Reset Link for ${email}: \n${resetUrl}\n`);
