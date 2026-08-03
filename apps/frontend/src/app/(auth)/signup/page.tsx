@@ -26,7 +26,7 @@ export default function SignupPage() {
 
     try {
       interface AuthResponse { user: { id: string; name: string; email: string; role: string }; accessToken: string; }
-      const data = await apiFetch<AuthResponse>("/api/auth/register", {
+      const data = await apiFetch<AuthResponse>("/api/auth/signup", {
         method: "POST",
         body: JSON.stringify(formData),
       });
