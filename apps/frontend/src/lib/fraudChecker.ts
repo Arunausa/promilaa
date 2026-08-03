@@ -10,10 +10,20 @@ export interface FraudCheckResult {
   rawData?: any;
 }
 
+/**
+ * Robust Multi-Tiered Fallback Fraud Checking Engine for BD E-Commerce
+ * 
+ * Execution Flow:
+ * Tier 1: FraudBD Multi-Courier API (Primary Guard - checks Pathao, Steadfast, RedX, Paperfly)
+ * Tier 2: Steadfast Courier Direct API (Fallback 1)
+ * Tier 3: Pathao Courier Direct API (Fallback 2)
+ * Tier 4: RedX / Carrybee Direct API (Fallback 3)
+ * Tier 5: Promilaa Internal DB Order History & Phone Format Guard (Safeguard)
+ */
 export async function checkPhoneNumberFraud(phone: string, orderId?: string): Promise<FraudCheckResult> {
   const cleanPhone = phone.trim();
 
-  // 1. Internal Database Order History Check
+  // 1. Internal Order History Check (Previous returned/cancelled orders in Promilaa DB)
   const previousOrders = await prisma.order.findMany({
     where: { guestPhone: cleanPhone },
     select: { status: true },
@@ -25,13 +35,13 @@ export async function checkPhoneNumberFraud(phone: string, orderId?: string): Pr
     return saveAndReturn(cleanPhone, {
       status: 'HIGH',
       riskScore: 90,
-      provider: 'Promilaa Internal Database',
-      reason: `Customer has ${cancelledCount} previously cancelled/returned orders! High Risk!`,
+      provider: 'Promilaa Internal Database Guard',
+      reason: `Customer has ${cancelledCount} previously cancelled/returned orders in Promilaa DB! High Risk!`,
       rawData: { cancelledCount },
     }, orderId);
   }
 
-  // 2. FraudBD API Integration (Server Environment Only)
+  // Tier 1: Official FraudBD Multi-Courier API (https://fraudbd.com/api-documentation)
   const fraudApiKey = process.env.FRAUD_API_KEY;
 
   if (fraudApiKey) {
@@ -85,11 +95,11 @@ export async function checkPhoneNumberFraud(phone: string, orderId?: string): Pr
         }
       }
     } catch (e) {
-      console.warn('FraudBD API request error:', e);
+      console.warn('[Fraud Engine] Tier 1 FraudBD check skipped or unavailable, triggering Tier 2 Fallback:', e);
     }
   }
 
-  // 3. Steadfast Direct Courier API Check
+  // Tier 2: Steadfast Courier Direct API Fallback
   const steadfastUser = process.env.STEADFAST_USER;
   const steadfastPassword = process.env.STEADFAST_PASSWORD;
 
@@ -116,17 +126,17 @@ export async function checkPhoneNumberFraud(phone: string, orderId?: string): Pr
         return saveAndReturn(cleanPhone, {
           status,
           riskScore,
-          provider: 'Steadfast Courier',
+          provider: 'Steadfast Courier Direct',
           reason: riskScore > 30 ? `Steadfast reported risk score of ${riskScore}` : 'Steadfast check passed',
           rawData: data,
         }, orderId);
       }
     } catch (e) {
-      console.warn('Steadfast check skipped or failed:', e);
+      console.warn('[Fraud Engine] Tier 2 Steadfast check skipped or unavailable, triggering Tier 3 Fallback:', e);
     }
   }
 
-  // 4. Pathao Direct Courier API Check
+  // Tier 3: Pathao Courier Direct API Fallback
   const pathaoUser = process.env.PATHAO_USER;
   const pathaoPassword = process.env.PATHAO_PASSWORD;
 
@@ -152,17 +162,53 @@ export async function checkPhoneNumberFraud(phone: string, orderId?: string): Pr
         return saveAndReturn(cleanPhone, {
           status,
           riskScore,
-          provider: 'Pathao Courier',
+          provider: 'Pathao Courier Direct',
           reason: riskScore > 30 ? `Pathao reported risk score of ${riskScore}` : 'Pathao check passed',
           rawData: data,
         }, orderId);
       }
     } catch (e) {
-      console.warn('Pathao check skipped or failed:', e);
+      console.warn('[Fraud Engine] Tier 3 Pathao check skipped or unavailable, triggering Tier 4 Fallback:', e);
     }
   }
 
-  // 5. Phone Format Validation Check
+  // Tier 4: RedX / Carrybee Direct API Fallback
+  const redxPhone = process.env.REDX_PHONE;
+  const redxPassword = process.env.REDX_PASSWORD;
+
+  if (redxPhone && redxPassword) {
+    try {
+      const res = await fetch('https://api.redx.com.bd/v1/parcels/fraud-check', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${redxPassword}`,
+        },
+        body: JSON.stringify({ phone: cleanPhone }),
+        signal: AbortSignal.timeout(4000),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const riskScore = data.risk_score || 0;
+        let status: FraudRiskLevel = 'LOW';
+        if (riskScore > 70) status = 'HIGH';
+        else if (riskScore > 30) status = 'MEDIUM';
+
+        return saveAndReturn(cleanPhone, {
+          status,
+          riskScore,
+          provider: 'RedX Courier Direct',
+          reason: `RedX reported risk score of ${riskScore}`,
+          rawData: data,
+        }, orderId);
+      }
+    } catch (e) {
+      console.warn('[Fraud Engine] Tier 4 RedX check skipped or unavailable:', e);
+    }
+  }
+
+  // Tier 5: Phone Format Validation & Promilaa DB Safeguard
   const isValidBDPhone = /^01[3-9]\d{8}$/.test(cleanPhone);
   if (!isValidBDPhone) {
     return saveAndReturn(cleanPhone, {
