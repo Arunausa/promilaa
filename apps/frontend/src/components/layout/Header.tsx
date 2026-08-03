@@ -7,6 +7,7 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { buttonVariants } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import MobileNav from '@/components/layout/MobileNav';
+import AnnouncementBar from '@/components/layout/AnnouncementBar';
 import { useEffect, useState } from 'react';
 
 export default function Header() {
@@ -22,7 +23,9 @@ export default function Header() {
   const user = mounted ? authStore.user : null;
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <>
+      <AnnouncementBar />
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         
         {/* Mobile Menu */}
@@ -91,5 +94,6 @@ export default function Header() {
         </div>
       </div>
     </header>
+    </>
   );
 }
