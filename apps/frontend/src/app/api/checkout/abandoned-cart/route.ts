@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { verifyAdminAuth } from '@/lib/adminAuth';
 
+const db = prisma as any;
+
 // POST: Save or update draft abandoned cart from checkout form
 export async function POST(req: Request) {
   try {
@@ -15,7 +17,7 @@ export async function POST(req: Request) {
     const cleanPhone = phone.trim();
 
     // Check if an active abandoned cart already exists for this phone number
-    const existing = await prisma.abandonedCart.findFirst({
+    const existing = await db.abandonedCart.findFirst({
       where: {
         phone: cleanPhone,
         isRecovered: false,
@@ -23,7 +25,7 @@ export async function POST(req: Request) {
     });
 
     if (existing) {
-      const updated = await prisma.abandonedCart.update({
+      const updated = await db.abandonedCart.update({
         where: { id: existing.id },
         data: {
           fullName,
@@ -37,7 +39,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true, cart: updated });
     }
 
-    const newCart = await prisma.abandonedCart.create({
+    const newCart = await db.abandonedCart.create({
       data: {
         phone: cleanPhone,
         fullName,
@@ -64,7 +66,7 @@ export async function GET(req: Request) {
   }
 
   try {
-    const carts = await prisma.abandonedCart.findMany({
+    const carts = await db.abandonedCart.findMany({
       where: { isRecovered: false },
       orderBy: { updatedAt: 'desc' },
       take: 50,
