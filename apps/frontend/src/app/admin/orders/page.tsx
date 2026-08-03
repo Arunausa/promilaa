@@ -57,11 +57,11 @@ export default function AdminOrders() {
     const itemRows = (order.items || []).map((it: any, idx: number) => {
       const variantLabel = [it.variant?.size, it.variant?.color].filter(Boolean).join(' / ') || '—';
       const rowBg = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
-      const price = parseFloat(String(it.price ?? 0)) || 0;
+      const price = parseFloat(String(it.unitPrice ?? it.price ?? 0)) || 0;
       const qty = Number(it.quantity) || 0;
       const lineTotal = price * qty;
       return `<tr style="background:${rowBg};border-bottom:1px solid #e2e8f0">
-        <td style="padding:8px 10px;font-weight:600;color:#0f172a">${it.product?.name || 'Ethnic Dress'}</td>
+        <td style="padding:8px 10px;font-weight:600;color:#0f172a">${it.product?.name || it.variant?.product?.name || 'Ethnic Dress'}</td>
         <td style="padding:8px 10px;color:#64748b;border-left:1px solid #e2e8f0">${variantLabel}</td>
         <td style="padding:8px 10px;text-align:center;font-family:monospace;font-weight:700;border-left:1px solid #e2e8f0">${qty}</td>
         <td style="padding:8px 10px;text-align:right;font-family:monospace;border-left:1px solid #e2e8f0">&#2547;${price.toLocaleString()}</td>
