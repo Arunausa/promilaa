@@ -124,6 +124,8 @@ export default function AdminSettingsPage() {
     try {
       // 1. Save to LocalStorage immediately
       localStorage.setItem("promilaa_admin_settings", JSON.stringify(settings));
+      // Notify all listeners (e.g. AnnouncementBar) to update instantly
+      window.dispatchEvent(new CustomEvent("promilaa:settings-changed", { detail: settings }));
 
       // 2. Persist to Server API
       await apiFetch("/api/admin/settings", {
