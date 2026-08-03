@@ -10,8 +10,9 @@ export const metadata: Metadata = {
 
 async function getOrderByNumber(orderNumber: string) {
   try {
+    const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || '';
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/orders/track?orderNumber=${orderNumber}&phone=`,
+      `${apiBase}/api/orders/track?orderNumber=${orderNumber}&phone=`,
       { cache: "no-store" }
     );
     if (!res.ok) return null;

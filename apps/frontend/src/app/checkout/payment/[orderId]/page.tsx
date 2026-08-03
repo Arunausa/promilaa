@@ -51,8 +51,9 @@ export default function PaymentProofPage({ params }: { params: Promise<{ orderId
       if (file) {
         const formData = new FormData();
         formData.append("file", file);
+        const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || '';
         const uploadRes = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/upload/payment-proof`,
+          `${apiBase}/api/upload/payment-proof`,
           { method: "POST", body: formData }
         );
         const uploadData = await uploadRes.json();
@@ -61,8 +62,9 @@ export default function PaymentProofPage({ params }: { params: Promise<{ orderId
       }
 
       // Submit payment proof
+      const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || '';
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/payments/${orderId}/proof`,
+        `${apiBase}/api/payments/${orderId}/proof`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },

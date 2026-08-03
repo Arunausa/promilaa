@@ -32,7 +32,8 @@ export default function AccountPage() {
   const fetchMyOrders = async () => {
     setLoadingOrders(true);
     try {
-      const res = await fetch("http://localhost:3001/api/orders/my-orders", {
+      const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+      const res = await fetch(`${apiBase}/api/orders/my-orders`, {
         headers: { Authorization: `Bearer ${accessToken}` }
       });
       if (res.ok) {
