@@ -21,9 +21,10 @@ const NAV_GROUPS = [
   {
     label: "Commerce",
     items: [
-      { href: "/admin/orders",    name: "Orders",    icon: ShoppingBag },
-      { href: "/admin/payments",  name: "Payments",  icon: CreditCard  },
-      { href: "/admin/coupons",   name: "Coupons",   icon: Tag         },
+      { href: "/admin/orders",          name: "Orders",          icon: ShoppingBag },
+      { href: "/admin/abandoned-carts", name: "Abandoned Carts", icon: ShoppingBag },
+      { href: "/admin/payments",        name: "Payments",        icon: CreditCard  },
+      { href: "/admin/coupons",         name: "Coupons",         icon: Tag         },
     ]
   },
   {

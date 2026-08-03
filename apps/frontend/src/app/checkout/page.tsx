@@ -30,6 +30,32 @@ export default function CheckoutPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Debounced Abandoned Cart Tracking
+  useEffect(() => {
+    if (formData.phone && formData.phone.length >= 11 && items.length > 0) {
+      const timer = setTimeout(() => {
+        fetch("/api/checkout/abandoned-cart", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            phone: formData.phone,
+            fullName: formData.fullName,
+            line1: formData.line1,
+            city: formData.city,
+            district: formData.district,
+            items: items.map((it) => ({
+              id: it.id,
+              quantity: it.quantity,
+              product: it.product,
+            })),
+            subtotal: getTotalPrice(),
+          }),
+        }).catch(() => {});
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [formData.phone, formData.fullName, formData.line1, formData.city, formData.district, items, getTotalPrice]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
