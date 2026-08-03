@@ -12,7 +12,8 @@ export interface FraudCheckResult {
 
 /**
  * Multi-Courier Fraud Checking Engine
- * Replicates AbiruzzamanMolla/Fraud-Checker-BD-Courier-Laravel logic in TypeScript
+ * Integrates Official FraudBD API (https://fraudbd.com/api-documentation)
+ * + Steadfast, Pathao, and Internal Order History
  */
 export async function checkPhoneNumberFraud(phone: string, orderId?: string): Promise<FraudCheckResult> {
   const cleanPhone = phone.trim();
@@ -35,19 +36,65 @@ export async function checkPhoneNumberFraud(phone: string, orderId?: string): Pr
     }, orderId);
   }
 
-  // 2. Steadfast / BD Courier Fraud API Check
+  // 2. Official FraudBD API Check (https://fraudbd.com/api-documentation)
+  const fraudApiKey = process.env.FRAUD_API_KEY || "6f5a0bfcc142b07190191e2bc8b97c53c24e8f3a6ad0ed8ea1a33b7c400163e4";
+
+  if (fraudApiKey) {
+    try {
+      const res = await fetch('https://fraudbd.com/api/check-courier-info', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'api_key': fraudApiKey,
+        },
+        body: JSON.stringify({ phone_number: cleanPhone }),
+        signal: AbortSignal.timeout(5000),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const successRate = data.success_rate || data.delivery_rate || 100;
+        const totalDelivered = data.total_delivered || data.delivered || 0;
+        const totalCancelled = data.total_cancelled || data.cancelled || 0;
+
+        let riskScore = 10;
+        let status: FraudRiskLevel = 'LOW';
+
+        if (totalCancelled > 3 || successRate < 50) {
+          riskScore = 85;
+          status = 'HIGH';
+        } else if (totalCancelled > 1 || successRate < 75) {
+          riskScore = 50;
+          status = 'MEDIUM';
+        }
+
+        return saveAndReturn(cleanPhone, {
+          status,
+          riskScore,
+          provider: 'FraudBD Multi-Courier Guard',
+          reason: totalCancelled > 0 
+            ? `FraudBD: ${totalDelivered} Delivered, ${totalCancelled} Cancelled (${successRate}% success rate)`
+            : 'FraudBD: Clean Courier History',
+          rawData: data,
+        }, orderId);
+      }
+    } catch (e) {
+      console.warn('FraudBD API check skipped or failed:', e);
+    }
+  }
+
+  // 3. Steadfast Courier Check
   const steadfastUser = process.env.STEADFAST_USER;
   const steadfastPassword = process.env.STEADFAST_PASSWORD;
-  const fraudApiKey = process.env.FRAUD_API_KEY;
 
-  if ((steadfastUser && steadfastPassword) || fraudApiKey) {
+  if (steadfastUser && steadfastPassword) {
     try {
       const res = await fetch('https://api.steadfast.com.bd/v1/fraud-check', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Api-Key': steadfastPassword || fraudApiKey || '',
-          'Api-Secret': steadfastUser || 'promilaa-secret',
+          'Api-Key': steadfastPassword,
+          'Api-Secret': steadfastUser,
         },
         body: JSON.stringify({ phone: cleanPhone }),
         signal: AbortSignal.timeout(4000),
@@ -73,7 +120,7 @@ export async function checkPhoneNumberFraud(phone: string, orderId?: string): Pr
     }
   }
 
-  // 3. Pathao Courier Check
+  // 4. Pathao Courier Check
   const pathaoUser = process.env.PATHAO_USER;
   const pathaoPassword = process.env.PATHAO_PASSWORD;
 
@@ -109,7 +156,7 @@ export async function checkPhoneNumberFraud(phone: string, orderId?: string): Pr
     }
   }
 
-  // 4. Default Validation & Struct Check
+  // 5. Default Validation & Struct Check
   const isValidBDPhone = /^01[3-9]\d{8}$/.test(cleanPhone);
   if (!isValidBDPhone) {
     return saveAndReturn(cleanPhone, {
