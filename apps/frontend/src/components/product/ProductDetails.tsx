@@ -309,7 +309,7 @@ export default function ProductDetails({ product }: { product: Product }) {
                   required 
                   value={fullName} 
                   onChange={(e) => setFullName(e.target.value)} 
-                  placeholder="যেমন: মোছাঃ শরিফা বেগম" 
+                  placeholder="আপনার পূর্ণ নাম লিখুন" 
                   className="w-full px-3.5 py-3 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
                 />
               </div>
@@ -321,7 +321,7 @@ export default function ProductDetails({ product }: { product: Product }) {
                   required 
                   value={phone} 
                   onChange={(e) => setPhone(e.target.value)} 
-                  placeholder="যেমন: 017XXXXXXXX" 
+                  placeholder="১১ ডিজিটের মোবাইল নম্বর" 
                   className="w-full px-3.5 py-3 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 font-mono"
                 />
               </div>
