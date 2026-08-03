@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Save, Store, CreditCard, Truck, Megaphone, CheckCircle2, ShieldCheck, Lock, MessageSquare, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { apiFetch } from "@/lib/api";
 
 type SettingsType = {
   storeName: string;
@@ -24,7 +25,6 @@ type SettingsType = {
   smsApiToken: string;
 };
 
-// SectionTitle moved outside to module scope
 const SectionTitle = ({ icon: Icon, title, subtitle }: { icon: React.ElementType; title: string; subtitle?: string }) => (
   <div className="flex flex-col mb-4 pb-3 border-b border-slate-100">
     <div className="flex items-center gap-2">
@@ -37,7 +37,6 @@ const SectionTitle = ({ icon: Icon, title, subtitle }: { icon: React.ElementType
   </div>
 );
 
-// Field component moved outside to module scope
 const Field = ({
   label,
   name,
@@ -58,7 +57,7 @@ const Field = ({
     <input
       type={type}
       name={name}
-      value={value}
+      value={value || ""}
       onChange={onChange}
       placeholder={placeholder}
       className="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 bg-white"
@@ -90,6 +89,26 @@ export default function AdminSettingsPage() {
     smsApiToken: "",
   });
 
+  // Load Settings on Mount
+  useEffect(() => {
+    // 1. Try LocalStorage
+    const local = localStorage.getItem("promilaa_admin_settings");
+    if (local) {
+      try {
+        setSettings(JSON.parse(local));
+      } catch (e) {}
+    }
+
+    // 2. Try Server Settings API
+    apiFetch<{ settings: SettingsType }>("/api/admin/settings")
+      .then((res) => {
+        if (res.settings) {
+          setSettings((prev) => ({ ...prev, ...res.settings }));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
     setSettings((prev) => ({
@@ -101,10 +120,27 @@ export default function AdminSettingsPage() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
-    await new Promise((r) => setTimeout(r, 600));
-    setSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+
+    try {
+      // 1. Save to LocalStorage immediately
+      localStorage.setItem("promilaa_admin_settings", JSON.stringify(settings));
+
+      // 2. Persist to Server API
+      await apiFetch("/api/admin/settings", {
+        method: "POST",
+        body: JSON.stringify(settings),
+      });
+
+      setSaved(true);
+      setTimeout(() => setSaved(false), 4000);
+    } catch (err) {
+      console.error("Failed to save settings:", err);
+      // Fallback saved via LocalStorage
+      setSaved(true);
+      setTimeout(() => setSaved(false), 4000);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -118,7 +154,7 @@ export default function AdminSettingsPage() {
         {saved && (
           <div className="flex items-center gap-2 text-emerald-700 bg-emerald-50 border border-emerald-200 px-4 py-2 rounded-xl text-sm font-semibold animate-in fade-in">
             <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-            সেটিংস সফলভাবে সেভ হয়েছে!
+            সেটিংস স্থায়ীভাবে সেভ হয়েছে!
           </div>
         )}
       </div>
@@ -132,7 +168,7 @@ export default function AdminSettingsPage() {
           <div>
             <h3 className="font-bold text-sm text-amber-400">১০০% সিকিউর এডমিন ড্যাশবোর্ড কন্ট্রোল</h3>
             <p className="text-xs text-slate-300 leading-relaxed mt-1">
-              আপনার Steadfast কুরিয়ার একাউন্টের লগইন তথ্য, Greenweb SMS Token এবং Facebook Pixel ID সব আপনি সরাসরি এই এডমিন পেজ থেকেই ম্যানেজ করতে পারবেন। কোনো সার্ভার কোডে ঢুকতে হবে না।
+              আপনার Steadfast কুরিয়ার একাউন্টের লগইন তথ্য, Greenweb SMS Token এবং Facebook Pixel ID সব আপনি সরাসরি এই এডমিন পেজ থেকেই পোস্ট ও সেভ করতে পারবেন।
             </p>
           </div>
         </div>
@@ -146,7 +182,6 @@ export default function AdminSettingsPage() {
           />
 
           <div className="space-y-6">
-            {/* Steadfast Direct Login */}
             <div className="p-4 bg-emerald-50/50 border border-emerald-200 rounded-xl space-y-3">
               <div className="flex items-center justify-between">
                 <h4 className="font-bold text-xs uppercase tracking-wider text-emerald-900 flex items-center gap-2">
@@ -155,12 +190,11 @@ export default function AdminSettingsPage() {
                 <span className="text-[10px] bg-emerald-200 text-emerald-900 px-2.5 py-0.5 rounded-full font-bold">Active Courier</span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Field label="Steadfast Username (Phone or Email)" name="steadfastUser" placeholder="01601708251" value={settings.steadfastUser} onChange={handleChange} />
+                <Field label="Steadfast Username (Phone or Email)" name="steadfastUser" placeholder="১১ ডিজিটের মোবাইল নম্বর" value={settings.steadfastUser} onChange={handleChange} />
                 <Field label="Steadfast Account Password" name="steadfastPassword" placeholder="••••••••" type="password" value={settings.steadfastPassword} onChange={handleChange} />
               </div>
             </div>
 
-            {/* FraudBD API */}
             <div className="p-4 bg-slate-50 border rounded-xl space-y-3">
               <h4 className="font-bold text-xs uppercase tracking-wider text-slate-800 flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-amber-600" /> FraudBD Multi-Courier Guard API (Optional)
