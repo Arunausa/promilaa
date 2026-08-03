@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { checkPhoneNumberFraud } from '@/lib/fraudChecker';
+import { sendOrderConfirmationSMS } from '@/lib/smsService';
 
 export async function POST(req: Request) {
   try {
@@ -75,8 +76,11 @@ export async function POST(req: Request) {
       },
     });
 
-    // Run Multi-Courier Fraud Checker (Steadfast, Pathao, RedX, Paperfly, Carrybee engine)
+    // 1. Run Multi-Courier Fraud Checker (Steadfast, Pathao, RedX, Paperfly, Carrybee engine)
     const fraudResult = await checkPhoneNumberFraud(phone, order.id);
+
+    // 2. Trigger Automated SMS Order Confirmation
+    await sendOrderConfirmationSMS(phone, order.orderNumber, Number(order.total));
 
     return NextResponse.json({
       success: true,
