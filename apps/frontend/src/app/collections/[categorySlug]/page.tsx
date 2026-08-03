@@ -37,7 +37,7 @@ async function getCategoryProducts(categorySlug: string, searchParams: any) {
     });
 
     if (inStockOnly) {
-      products = products.filter(p => p.variants.some(v => v.stock > 0));
+      products = products.filter((p: any) => p.variants.some((v: any) => v.stock > 0));
     }
 
     const totalCount = products.length;
