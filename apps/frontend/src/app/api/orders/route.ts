@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { checkPhoneNumberFraud } from '@/lib/fraudChecker';
 
 export async function POST(req: Request) {
   try {
@@ -18,7 +19,6 @@ export async function POST(req: Request) {
     const orderItemsData = [];
 
     for (const item of items) {
-      // item can have variantId/id and quantity
       const variant = await prisma.productVariant.findUnique({
         where: { id: item.id },
         include: { product: true },
@@ -75,45 +75,8 @@ export async function POST(req: Request) {
       },
     });
 
-    // Fraud Detection Logic
-    let riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' = 'LOW';
-    let riskScore = 10;
-    let reason = 'Normal phone number';
-
-    // Check previous canceled/returned orders for this phone
-    const previousOrders = await prisma.order.findMany({
-      where: { guestPhone: phone },
-      select: { status: true },
-    });
-
-    const cancelledCount = previousOrders.filter(o => o.status === 'CANCELLED' || o.status === 'RETURNED').length;
-    
-    if (cancelledCount >= 2) {
-      riskLevel = 'HIGH';
-      riskScore = 85;
-      reason = `Customer has ${cancelledCount} previously cancelled/returned orders! High Risk!`;
-    } else if (cancelledCount === 1) {
-      riskLevel = 'MEDIUM';
-      riskScore = 45;
-      reason = `Customer has 1 previously cancelled order.`;
-    } else if (!/^01[3-9]\d{8}$/.test(phone)) {
-      riskLevel = 'HIGH';
-      riskScore = 90;
-      reason = `Invalid BD Phone number structure (${phone})`;
-    }
-
-    // Create FraudReport in DB
-    await prisma.fraudReport.create({
-      data: {
-        orderId: order.id,
-        phone,
-        riskScore,
-        riskLevel,
-        provider: 'Promilaa Intelligence Guard',
-        reason,
-        rawData: { cancelledCount, phoneCheck: 'Passed' },
-      },
-    });
+    // Run Multi-Courier Fraud Checker (Steadfast, Pathao, RedX, Paperfly, Carrybee engine)
+    const fraudResult = await checkPhoneNumberFraud(phone, order.id);
 
     return NextResponse.json({
       success: true,
@@ -122,7 +85,7 @@ export async function POST(req: Request) {
         orderNumber: order.orderNumber,
         total: order.total,
         paymentMethod: paymentMethod || 'COD',
-        riskLevel,
+        riskLevel: fraudResult.status,
       },
     }, { status: 201 });
 
