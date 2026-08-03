@@ -22,7 +22,7 @@ export default function AdminBanners() {
 
   const fetchBanners = async () => {
     try {
-      const res = await fetch("http://localhost:3001/api/banners");
+      const res = await fetch("/api/banners");
       if (res.ok) {
         const data = await res.json();
         setBanners(data.banners);
@@ -41,7 +41,7 @@ export default function AdminBanners() {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:3001/api/banners", {
+      const res = await fetch("/api/banners", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -64,7 +64,7 @@ export default function AdminBanners() {
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure?")) return;
     try {
-      const res = await fetch(`http://localhost:3001/api/banners/${id}`, {
+      const res = await fetch(`/api/banners/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${accessToken}` },
       });

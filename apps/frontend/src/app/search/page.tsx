@@ -37,8 +37,9 @@ function SearchContent() {
     }
     setLoading(true);
     try {
+      const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || '';
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001"}/api/products/search?q=${encodeURIComponent(q)}&limit=40`
+        `${apiBase}/api/products/search?q=${encodeURIComponent(q)}&limit=40`
       );
       const data = await res.json();
       setProducts(data.data || []);

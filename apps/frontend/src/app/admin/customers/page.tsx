@@ -12,7 +12,7 @@ export default function AdminCustomers() {
 
   const fetchCustomers = async () => {
     try {
-      const res = await fetch("http://localhost:3001/api/admin/customers", {
+      const res = await fetch("/api/admin/customers", {
         headers: { Authorization: `Bearer ${accessToken}` }
       });
       if (res.ok) {
@@ -34,7 +34,7 @@ export default function AdminCustomers() {
     if (!confirm(`Are you sure you want to ${currentlyBlocked ? 'unblock' : 'block'} this user?`)) return;
     
     try {
-      const res = await fetch(`http://localhost:3001/api/admin/customers/${id}/block`, {
+      const res = await fetch(`/api/admin/customers/${id}/block`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

@@ -23,7 +23,7 @@ export default function AdminCoupons() {
   const fetchCoupons = async () => {
     try {
       // Assuming a GET /api/coupons endpoint exists for admin
-      const res = await fetch("http://localhost:3001/api/coupons", {
+      const res = await fetch("/api/coupons", {
         headers: { Authorization: `Bearer ${accessToken}` }
       });
       if (res.ok) {
@@ -44,7 +44,7 @@ export default function AdminCoupons() {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:3001/api/coupons", {
+      const res = await fetch("/api/coupons", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
