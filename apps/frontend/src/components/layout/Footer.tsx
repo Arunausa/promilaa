@@ -62,7 +62,7 @@ export default function Footer() {
         <div className="space-y-4">
           <h3 className="font-serif font-bold text-2xl text-white tracking-widest uppercase">PROMILAA</h3>
           <p className="text-xs text-slate-400 leading-relaxed font-light">
-            Bangladeshi women's ethnic & fusion wear brand. Offering handcrafted Kurtis, 1-Piece, 2-Piece & 3-Piece collections for modern elegance.
+            Bangladeshi women&apos;s ethnic &amp; fusion wear brand. Offering handcrafted Kurtis, 1-Piece, 2-Piece &amp; 3-Piece collections for modern elegance.
           </p>
           <div className="flex items-center gap-3 pt-2 text-slate-400">
             {/* Facebook SVG */}
@@ -88,7 +88,7 @@ export default function Footer() {
             <li><Link href="/collections/one-piece" className="hover:text-amber-400 transition-colors">One Piece Dresses</Link></li>
             <li><Link href="/collections/two-piece" className="hover:text-amber-400 transition-colors">Two Piece Sets</Link></li>
             <li><Link href="/collections/three-piece" className="hover:text-amber-400 transition-colors">Three Piece Suits</Link></li>
-            <li><Link href="/collections/festive" className="hover:text-amber-400 transition-colors">Festive Collection '26</Link></li>
+            <li><Link href="/collections/festive" className="hover:text-amber-400 transition-colors">Festive Collection &apos;26</Link></li>
           </ul>
         </div>
 

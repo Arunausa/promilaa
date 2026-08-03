@@ -168,7 +168,7 @@ export default async function CollectionPage({
         <div className="text-center py-32 bg-white rounded-lg border border-dashed shadow-sm max-w-2xl mx-auto">
           <PackageX className="w-16 h-16 text-slate-200 mx-auto mb-6" />
           <h3 className="text-2xl font-bold tracking-tight mb-2">No items found</h3>
-          <p className="text-muted-foreground mb-8">We couldn't find any products matching your filters.</p>
+          <p className="text-muted-foreground mb-8">We couldn&apos;t find any products matching your filters.</p>
         </div>
       )}
     </div>

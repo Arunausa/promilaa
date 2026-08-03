@@ -58,7 +58,8 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
 
   useEffect(() => {
     if (useAuthStore.persist.hasHydrated()) {
-      setHasHydrated(true);
+      const timer = setTimeout(() => setHasHydrated(true), 0);
+      return () => clearTimeout(timer);
     }
     const unsub = useAuthStore.persist.onFinishHydration(() => {
       setHasHydrated(true);

@@ -52,7 +52,8 @@ function SearchContent() {
   }, []);
 
   useEffect(() => {
-    fetchResults(initialQ);
+    const timer = setTimeout(() => fetchResults(initialQ), 0);
+    return () => clearTimeout(timer);
   }, [initialQ, fetchResults]);
 
   const handleSearch = (e: React.FormEvent) => {

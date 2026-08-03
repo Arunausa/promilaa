@@ -15,7 +15,8 @@ export default function Header() {
   const authStore = useAuthStore();
 
   useEffect(() => {
-    setMounted(true);
+    const timer = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const totalItems = mounted ? cartStore.getTotalItems() : 0;

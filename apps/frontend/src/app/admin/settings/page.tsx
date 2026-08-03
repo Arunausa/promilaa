@@ -4,11 +4,73 @@ import { useState } from "react";
 import { Save, Store, CreditCard, Truck, Megaphone, CheckCircle2, ShieldCheck, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+type SettingsType = {
+  storeName: string;
+  storePhone: string;
+  storeEmail: string;
+  bkashNumber: string;
+  nagadNumber: string;
+  rocketNumber: string;
+  shippingDhaka: string;
+  shippingOutsideDhaka: string;
+  announcementEnabled: boolean;
+  announcementText: string;
+  steadfastApiKey: string;
+  steadfastSecretKey: string;
+  pathaoClientId: string;
+  pathaoClientSecret: string;
+  pathaoUsername: string;
+  pathaoPassword: string;
+  redxApiToken: string;
+};
+
+// SectionTitle moved outside to module scope
+const SectionTitle = ({ icon: Icon, title, subtitle }: { icon: React.ElementType; title: string; subtitle?: string }) => (
+  <div className="flex flex-col mb-4 pb-3 border-b border-slate-100">
+    <div className="flex items-center gap-2">
+      <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center">
+        <Icon className="w-4 h-4 text-slate-700" />
+      </div>
+      <h2 className="font-bold text-slate-900">{title}</h2>
+    </div>
+    {subtitle && <p className="text-xs text-slate-500 mt-1 pl-10">{subtitle}</p>}
+  </div>
+);
+
+// Field component moved outside to module scope
+const Field = ({
+  label,
+  name,
+  placeholder,
+  type = "text",
+  value,
+  onChange,
+}: {
+  label: string;
+  name: keyof SettingsType;
+  placeholder?: string;
+  type?: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+}) => (
+  <div>
+    <label className="block text-xs font-bold text-slate-700 mb-1">{label}</label>
+    <input
+      type={type}
+      name={name}
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+      className="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 bg-white"
+    />
+  </div>
+);
+
 export default function AdminSettingsPage() {
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState<SettingsType>({
     storeName: "Promilaa Ethnic Wear",
     storePhone: "017XXXXXXXX",
     storeEmail: "support@promilaa.com",
@@ -19,7 +81,6 @@ export default function AdminSettingsPage() {
     shippingOutsideDhaka: "150",
     announcementEnabled: true,
     announcementText: "🌸 ক্যাশ অন ডেলিভারিতে শপিং করুন - সারা বাংলাদেশে হোম ডেলিভারি! 🌸",
-    // Courier & Fraud API Keys
     steadfastApiKey: "",
     steadfastSecretKey: "",
     pathaoClientId: "",
@@ -46,51 +107,16 @@ export default function AdminSettingsPage() {
     setTimeout(() => setSaved(false), 3000);
   };
 
-  const SectionTitle = ({ icon: Icon, title, subtitle }: { icon: React.ElementType; title: string; subtitle?: string }) => (
-    <div className="flex flex-col mb-4 pb-3 border-b border-slate-100">
-      <div className="flex items-center gap-2">
-        <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center">
-          <Icon className="w-4 h-4 text-slate-700" />
-        </div>
-        <h2 className="font-bold text-slate-900">{title}</h2>
-      </div>
-      {subtitle && <p className="text-xs text-slate-500 mt-1 pl-10">{subtitle}</p>}
-    </div>
-  );
-
-  const Field = ({
-    label,
-    name,
-    placeholder,
-    type = "text",
-  }: {
-    label: string;
-    name: keyof typeof settings;
-    placeholder?: string;
-    type?: string;
-  }) => (
-    <div>
-      <label className="block text-xs font-bold text-slate-700 mb-1">{label}</label>
-      <input
-        type={type}
-        name={name}
-        value={settings[name] as string}
-        onChange={handleChange}
-        placeholder={placeholder}
-        className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
-      />
-    </div>
-  );
-
   return (
     <div className="max-w-4xl space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl md:text-3xl font-serif font-bold text-slate-900">Store Settings & Courier Integrations</h1>
-          <p className="text-xs text-slate-500 mt-1">কুরিয়ার ফ্রড এপিআই এবং শপের সব সেটিংস কনফিগার করুন</p>
+          <h1 className="text-2xl font-bold text-slate-900">Store & System Settings</h1>
+          <p className="text-xs text-slate-500 mt-1">শপের জেনারেল সেটিংস, কুরিয়ার এপিআই কি ও ডেলিভারি চার্জ ব্যবস্থাপনা</p>
         </div>
+
         {saved && (
-          <div className="flex items-center gap-2 text-emerald-800 bg-emerald-50 border border-emerald-200 px-4 py-2 rounded-xl text-sm font-bold shadow-sm">
+          <div className="flex items-center gap-2 text-emerald-700 bg-emerald-50 border border-emerald-200 px-4 py-2 rounded-xl text-sm font-semibold animate-in fade-in">
             <CheckCircle2 className="w-4 h-4 text-emerald-600" />
             সেটিংস সফলভাবে সংরক্ষিত হয়েছে!
           </div>
@@ -126,8 +152,8 @@ export default function AdminSettingsPage() {
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Steadfast Courier Fraud Checker API
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Field label="Steadfast API Key" name="steadfastApiKey" placeholder="st_live_xxxxxxxxx" />
-                <Field label="Steadfast Secret Key" name="steadfastSecretKey" placeholder="st_secret_xxxxxxxxx" type="password" />
+                <Field label="Steadfast API Key" name="steadfastApiKey" placeholder="st_live_xxxxxxxxx" value={settings.steadfastApiKey} onChange={handleChange} />
+                <Field label="Steadfast Secret Key" name="steadfastSecretKey" placeholder="st_secret_xxxxxxxxx" type="password" value={settings.steadfastSecretKey} onChange={handleChange} />
               </div>
             </div>
 
@@ -137,10 +163,10 @@ export default function AdminSettingsPage() {
                 <span className="w-2.5 h-2.5 rounded-full bg-red-500"></span> Pathao Courier Fraud Checker API
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Field label="Pathao Client ID" name="pathaoClientId" placeholder="client_id_xxxx" />
-                <Field label="Pathao Client Secret" name="pathaoClientSecret" placeholder="client_secret_xxxx" type="password" />
-                <Field label="Pathao Username (Email)" name="pathaoUsername" placeholder="your_email@pathao.com" />
-                <Field label="Pathao Password" name="pathaoPassword" placeholder="••••••••" type="password" />
+                <Field label="Pathao Client ID" name="pathaoClientId" placeholder="client_id_xxxx" value={settings.pathaoClientId} onChange={handleChange} />
+                <Field label="Pathao Client Secret" name="pathaoClientSecret" placeholder="client_secret_xxxx" type="password" value={settings.pathaoClientSecret} onChange={handleChange} />
+                <Field label="Pathao Username (Email)" name="pathaoUsername" placeholder="your_email@pathao.com" value={settings.pathaoUsername} onChange={handleChange} />
+                <Field label="Pathao Password" name="pathaoPassword" placeholder="••••••••" type="password" value={settings.pathaoPassword} onChange={handleChange} />
               </div>
             </div>
 
@@ -149,7 +175,7 @@ export default function AdminSettingsPage() {
               <h4 className="font-bold text-xs uppercase tracking-wider text-slate-800 flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-rose-500"></span> RedX Courier API
               </h4>
-              <Field label="RedX Access Token" name="redxApiToken" placeholder="redx_bearer_token_xxxx" type="password" />
+              <Field label="RedX Access Token" name="redxApiToken" placeholder="redx_bearer_token_xxxx" type="password" value={settings.redxApiToken} onChange={handleChange} />
             </div>
           </div>
         </div>
@@ -158,9 +184,9 @@ export default function AdminSettingsPage() {
         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
           <SectionTitle icon={Store} title="Store Information (শপের তথ্য)" />
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <Field label="Store Name" name="storeName" placeholder="Promilaa" />
-            <Field label="Support Phone" name="storePhone" placeholder="017XXXXXXXX" type="tel" />
-            <Field label="Support Email" name="storeEmail" placeholder="support@promilaa.com" type="email" />
+            <Field label="Store Name" name="storeName" placeholder="Promilaa" value={settings.storeName} onChange={handleChange} />
+            <Field label="Support Phone" name="storePhone" placeholder="017XXXXXXXX" type="tel" value={settings.storePhone} onChange={handleChange} />
+            <Field label="Support Email" name="storeEmail" placeholder="support@promilaa.com" type="email" value={settings.storeEmail} onChange={handleChange} />
           </div>
         </div>
 
@@ -172,9 +198,9 @@ export default function AdminSettingsPage() {
             subtitle="কাস্টমারদের চেকআউট পেজে এই নম্বরগুলো সেন্ড মানির জন্য দেখানো হবে"
           />
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <Field label="bKash Personal Number" name="bkashNumber" placeholder="017XXXXXXXX" type="tel" />
-            <Field label="Nagad Personal Number" name="nagadNumber" placeholder="017XXXXXXXX" type="tel" />
-            <Field label="Rocket Personal Number" name="rocketNumber" placeholder="017XXXXXXXX" type="tel" />
+            <Field label="bKash Personal Number" name="bkashNumber" placeholder="017XXXXXXXX" type="tel" value={settings.bkashNumber} onChange={handleChange} />
+            <Field label="Nagad Personal Number" name="nagadNumber" placeholder="017XXXXXXXX" type="tel" value={settings.nagadNumber} onChange={handleChange} />
+            <Field label="Rocket Personal Number" name="rocketNumber" placeholder="017XXXXXXXX" type="tel" value={settings.rocketNumber} onChange={handleChange} />
           </div>
         </div>
 
@@ -182,8 +208,8 @@ export default function AdminSettingsPage() {
         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
           <SectionTitle icon={Truck} title="Shipping Fees (ডেলিভারি চার্জ)" />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Field label="Dhaka Inside Delivery Fee (৳)" name="shippingDhaka" placeholder="80" type="number" />
-            <Field label="Outside Dhaka Delivery Fee (৳)" name="shippingOutsideDhaka" placeholder="150" type="number" />
+            <Field label="Dhaka Inside Delivery Fee (৳)" name="shippingDhaka" placeholder="80" type="number" value={settings.shippingDhaka} onChange={handleChange} />
+            <Field label="Outside Dhaka Delivery Fee (৳)" name="shippingOutsideDhaka" placeholder="150" type="number" value={settings.shippingOutsideDhaka} onChange={handleChange} />
           </div>
         </div>
 

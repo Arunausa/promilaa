@@ -8,12 +8,12 @@ const eslintConfig = defineConfig([
   {
     rules: {
       "@next/next/no-img-element": "off",
-      "react/no-unescaped-entities": "off",
-      "@typescript-eslint/no-explicit-any": "off",
-      "@typescript-eslint/no-unused-vars": "off",
-      "react-hooks/set-state-in-effect": "off",
-      "react-hooks/static-components": "off",
-      "jsx-a11y/alt-text": "off",
+      "react/no-unescaped-entities": "warn",
+      "react-hooks/set-state-in-effect": "warn",
+      "react-hooks/static-components": "warn",
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-unused-vars": "warn",
+      "jsx-a11y/alt-text": "warn",
     }
   },
   globalIgnores([

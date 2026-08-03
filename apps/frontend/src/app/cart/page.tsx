@@ -10,7 +10,8 @@ export default function CartPage() {
   const { items, removeItem, updateQuantity, getTotalPrice } = useCartStore();
 
   useEffect(() => {
-    setMounted(true);
+    const timer = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(timer);
   }, []);
 
   if (!mounted) return null;
