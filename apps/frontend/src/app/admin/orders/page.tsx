@@ -65,97 +65,122 @@ export default function AdminOrders() {
       {/* Printable Cash Memo Container (Hidden on screen, visible during window.print) */}
       {selectedOrderForPrint && (
         <div className="hidden print:block fixed inset-0 bg-white z-50 font-sans">
-          {/* A4 Page */}
-          <div style={{
-            width: '210mm',
-            minHeight: '297mm',
-            margin: '0 auto',
-            padding: '16mm 18mm',
-            backgroundColor: '#ffffff',
-            color: '#0f172a',
-          }}>
+          {/* Force single A4 page */}
+          <style>{`
+            @page { size: A4 portrait; margin: 0; }
+            @media print {
+              body * { visibility: hidden; }
+              .print-memo, .print-memo * { visibility: visible; }
+              .print-memo { position: fixed; top: 0; left: 0; width: 100%; height: 100%; }
+            }
+          `}</style>
 
-            {/* ── HEADER ── */}
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'flex-start',
-              borderBottom: '3px solid #0f172a',
-              paddingBottom: '14px',
-              marginBottom: '18px',
-            }}>
+          <div className="print-memo" style={{width:'210mm', minHeight:'297mm', margin:'0 auto', padding:'14mm 16mm', backgroundColor:'#ffffff', color:'#0f172a', boxSizing:'border-box'}}>
+
+            {/* HEADER */}
+            <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', borderBottom:'3px solid #0f172a', paddingBottom:'12px', marginBottom:'16px'}}>
               <div>
-                <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
-                  <span style={{fontSize: '28px', fontWeight: '900', letterSpacing: '4px', color: '#0f172a'}}>PROMILAA</span>
-                  <span style={{fontSize: '9px', fontWeight: '800', letterSpacing: '2px', background: '#0f172a', color: '#fff', padding: '3px 8px', borderRadius: '4px'}}>BY SOPNIL</span>
+                <div style={{display:'flex', alignItems:'center', gap:'8px'}}>
+                  <span style={{fontSize:'26px', fontWeight:'900', letterSpacing:'4px', color:'#0f172a'}}>PROMILAA</span>
+                  <span style={{fontSize:'9px', fontWeight:'800', letterSpacing:'2px', background:'#0f172a', color:'#fff', padding:'3px 8px', borderRadius:'4px'}}>BY SOPNIL</span>
                 </div>
-                <p style={{fontSize: '10px', color: '#475569', marginTop: '4px'}}>📍 সলিমুল্লাহ রোড, মোহাম্মদপুর, ঢাকা-১২০৭</p>
-                <p style={{fontSize: '10px', color: '#475569'}}>📞 01601708251 &nbsp;|&nbsp; 🌐 www.promilaa.com</p>
+                <p style={{fontSize:'10px', color:'#475569', marginTop:'3px'}}>📍 সলিমুল্লাহ রোড, মোহাম্মদপুর, ঢাকা-১২০৭</p>
+                <p style={{fontSize:'10px', color:'#475569'}}>📞 01601708251 | 🌐 www.promilaa.com</p>
               </div>
-              <div style={{textAlign: 'right'}}>
-                <div style={{background: '#0f172a', color: '#fff', padding: '10px 18px', borderRadius: '8px', display: 'inline-block'}}>
-                  <p style={{fontSize: '9px', letterSpacing: '3px', color: '#94a3b8', marginBottom: '2px'}}>CASH MEMO</p>
-                  <p style={{fontSize: '16px', fontWeight: '800', fontFamily: 'monospace'}}>#{selectedOrderForPrint.orderNumber}</p>
+              <div style={{textAlign:'right'}}>
+                <div style={{background:'#0f172a', color:'#fff', padding:'10px 16px', borderRadius:'8px', display:'inline-block'}}>
+                  <p style={{fontSize:'9px', letterSpacing:'3px', color:'#94a3b8', marginBottom:'2px'}}>CASH MEMO</p>
+                  <p style={{fontSize:'16px', fontWeight:'800', fontFamily:'monospace'}}>#{selectedOrderForPrint.orderNumber}</p>
                 </div>
-                <p style={{fontSize: '10px', color: '#64748b', marginTop: '6px'}}>
+                <p style={{fontSize:'10px', color:'#64748b', marginTop:'5px'}}>
                   তারিখ: {new Date(selectedOrderForPrint.createdAt).toLocaleDateString('bn-BD', {day:'numeric', month:'long', year:'numeric'})}
                 </p>
               </div>
             </div>
 
-            {/* ── CUSTOMER & DELIVERY INFO ── */}
-            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '20px'}}>
-              <div style={{border: '1px solid #e2e8f0', borderRadius: '8px', padding: '12px', background: '#f8fafc'}}>
-                <p style={{fontSize: '9px', fontWeight: '800', letterSpacing: '2px', color: '#94a3b8', marginBottom: '6px', textTransform: 'uppercase'}}>গ্রাহকের তথ্য</p>
-                <p style={{fontSize: '13px', fontWeight: '700', color: '#0f172a'}}>{selectedOrderForPrint.shippingAddress?.fullName || 'Valued Customer'}</p>
-                <p style={{fontSize: '11px', fontWeight: '700', color: '#b45309', marginTop: '3px', fontFamily: 'monospace'}}>{selectedOrderForPrint.guestPhone}</p>
-                <p style={{fontSize: '10px', color: '#475569', marginTop: '4px', lineHeight: '1.5'}}>
-                  {selectedOrderForPrint.shippingAddress?.line1}<br/>{selectedOrderForPrint.shippingAddress?.city}
+            {/* CUSTOMER & DELIVERY */}
+            <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px', marginBottom:'16px'}}>
+              <div style={{border:'1px solid #e2e8f0', borderRadius:'8px', padding:'10px', background:'#f8fafc'}}>
+                <p style={{fontSize:'9px', fontWeight:'800', letterSpacing:'2px', color:'#94a3b8', marginBottom:'5px', textTransform:'uppercase'}}>গ্রাহকের তথ্য</p>
+                <p style={{fontSize:'13px', fontWeight:'700', color:'#0f172a'}}>{selectedOrderForPrint.shippingAddress?.fullName || 'Valued Customer'}</p>
+                <p style={{fontSize:'11px', fontWeight:'700', color:'#b45309', marginTop:'2px', fontFamily:'monospace'}}>{selectedOrderForPrint.guestPhone}</p>
+                <p style={{fontSize:'10px', color:'#475569', marginTop:'3px', lineHeight:'1.6'}}>
+                  {selectedOrderForPrint.shippingAddress?.line1}<br />{selectedOrderForPrint.shippingAddress?.city}
                 </p>
               </div>
-              <div style={{border: '1px solid #e2e8f0', borderRadius: '8px', padding: '12px', background: '#f8fafc'}}>
-                <p style={{fontSize: '9px', fontWeight: '800', letterSpacing: '2px', color: '#94a3b8', marginBottom: '6px', textTransform: 'uppercase'}}>ডেলিভারি ও পেমেন্ট</p>
-                <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}>
-                  <span style={{fontSize: '10px', color: '#64748b'}}>পেমেন্ট মেথড:</span>
-                  <span style={{fontSize: '10px', fontWeight: '700', background: '#fef3c7', color: '#92400e', padding: '1px 8px', borderRadius: '20px'}}>{selectedOrderForPrint.payment?.method || 'Cash on Delivery'}</span>
+              <div style={{border:'1px solid #e2e8f0', borderRadius:'8px', padding:'10px', background:'#f8fafc'}}>
+                <p style={{fontSize:'9px', fontWeight:'800', letterSpacing:'2px', color:'#94a3b8', marginBottom:'5px', textTransform:'uppercase'}}>ডেলিভারি ও পেমেন্ট</p>
+                <div style={{display:'flex', justifyContent:'space-between', marginBottom:'4px'}}>
+                  <span style={{fontSize:'10px', color:'#64748b'}}>পেমেন্ট মেথড:</span>
+                  <span style={{fontSize:'10px', fontWeight:'700', background:'#fef3c7', color:'#92400e', padding:'1px 8px', borderRadius:'20px'}}>{selectedOrderForPrint.payment?.method || 'Cash on Delivery'}</span>
                 </div>
-                <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}>
-                  <span style={{fontSize: '10px', color: '#64748b'}}>ডেলিভারি এলাকা:</span>
-                  <span style={{fontSize: '10px', fontWeight: '700', color: '#0f172a'}}>{selectedOrderForPrint.shippingAddress?.city || 'Dhaka'}</span>
+                <div style={{display:'flex', justifyContent:'space-between', marginBottom:'4px'}}>
+                  <span style={{fontSize:'10px', color:'#64748b'}}>ডেলিভারি এলাকা:</span>
+                  <span style={{fontSize:'10px', fontWeight:'700', color:'#0f172a'}}>{selectedOrderForPrint.shippingAddress?.city || 'Dhaka'}</span>
                 </div>
-                <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                  <span style={{fontSize: '10px', color: '#64748b'}}>স্ট্যাটাস:</span>
-                  <span style={{fontSize: '10px', fontWeight: '700', color: '#065f46', background: '#d1fae5', padding: '1px 8px', borderRadius: '20px'}}>{selectedOrderForPrint.status}</span>
+                <div style={{display:'flex', justifyContent:'space-between'}}>
+                  <span style={{fontSize:'10px', color:'#64748b'}}>স্ট্যাটাস:</span>
+                  <span style={{fontSize:'10px', fontWeight:'700', color:'#065f46', background:'#d1fae5', padding:'1px 8px', borderRadius:'20px'}}>{selectedOrderForPrint.status}</span>
                 </div>
               </div>
             </div>
 
-            {/* ── ITEMS TABLE ── */}
-            <table style={{width: '100%', borderCollapse: 'collapse', marginBottom: '20px', fontSize: '11px'}}>
+            {/* ITEMS TABLE */}
+            <table style={{width:'100%', borderCollapse:'collapse', marginBottom:'16px', fontSize:'11px'}}>
               <thead>
-                <tr style={{background: '#0f172a', color: '#fff'}}>
-                  <th style={{padding: '10px 12px', textAlign: 'left', fontWeight: '700'}}>পণ্যের নাম</th>
-                  <th style={{padding: '10px 12px', textAlign: 'left', fontWeight: '700', borderLeft: '1px solid #1e293b'}}>সাইজ / কালার</th>
-                  <th style={{padding: '10px 12px', textAlign: 'center', fontWeight: '700', borderLeft: '1px solid #1e293b'}}>পরিমাণ</th>
-                  <th style={{padding: '10px 12px', textAlign: 'right', fontWeight: '700', borderLeft: '1px solid #1e293b'}}>একক মূল্য</th>
-                  <th style={{padding: '10px 12px', textAlign: 'right', fontWeight: '700', borderLeft: '1px solid #1e293b'}}>মোট</th>
+                <tr style={{background:'#0f172a', color:'#fff'}}>
+                  <th style={{padding:'9px 10px', textAlign:'left', fontWeight:'700'}}>পণ্যের নাম</th>
+                  <th style={{padding:'9px 10px', textAlign:'left', fontWeight:'700', borderLeft:'1px solid #1e293b'}}>সাইজ / কালার</th>
+                  <th style={{padding:'9px 10px', textAlign:'center', fontWeight:'700', borderLeft:'1px solid #1e293b'}}>পরিমাণ</th>
+                  <th style={{padding:'9px 10px', textAlign:'right', fontWeight:'700', borderLeft:'1px solid #1e293b'}}>একক মূল্য</th>
+                  <th style={{padding:'9px 10px', textAlign:'right', fontWeight:'700', borderLeft:'1px solid #1e293b'}}>মোট</th>
                 </tr>
               </thead>
               <tbody>
-                {selectedOrderForPrint.items?.map((it: any, idx: number) => (
-                  <tr key={idx} style={{borderBottom: '1px solid #e2e8f0', background: idx % 2 === 0 ? '#fff' : '#f8fafc'}}>
-                    <td style={{padding: '9px 12px', fontWeight: '600', color: '#0f172a'}}>{it.product?.name || 'Ethnic Dress'}</td>
-                    <td style={{padding: '9px 12px', color: '#64748b', borderLeft: '1px solid #e2e8f0'}}>{it.variant?.size || '—'} {it.variant?.color ? `/ ${it.variant.color}` : ''}</td>
-                    <td style={{padding: '9px 12px', textAlign: 'center', fontFamily: 'monospace', fontWeight: '700', borderLeft: '1px solid #e2e8f0'}}>{it.quantity}</td>
-                    <td style={{padding: '9px 12px', textAlign: 'right', fontFamily: 'monospace', borderLeft: '1px solid #e2e8f0'}}>৳{Number(it.price).toLocaleString()}</td>
-                    <td style={{padding: '9px 12px', textAlign: 'right', fontFamily: 'monospace', fontWeight: '700', color: '#0f172a', borderLeft: '1px solid #e2e8f0'}}>৳{(Number(it.price) * it.quantity).toLocaleString()}</td>
-                  </tr>
-                ))}
+                {selectedOrderForPrint.items?.map((it: any, idx: number) => {
+                  const variantLabel = [it.variant?.size, it.variant?.color].filter(Boolean).join(' / ') || '—';
+                  return (
+                    <tr key={idx} style={{borderBottom:'1px solid #e2e8f0', background: idx % 2 === 0 ? '#fff' : '#f8fafc'}}>
+                      <td style={{padding:'8px 10px', fontWeight:'600', color:'#0f172a'}}>{it.product?.name || 'Ethnic Dress'}</td>
+                      <td style={{padding:'8px 10px', color:'#64748b', borderLeft:'1px solid #e2e8f0'}}>{variantLabel}</td>
+                      <td style={{padding:'8px 10px', textAlign:'center', fontFamily:'monospace', fontWeight:'700', borderLeft:'1px solid #e2e8f0'}}>{it.quantity}</td>
+                      <td style={{padding:'8px 10px', textAlign:'right', fontFamily:'monospace', borderLeft:'1px solid #e2e8f0'}}>৳{Number(it.price).toLocaleString()}</td>
+                      <td style={{padding:'8px 10px', textAlign:'right', fontFamily:'monospace', fontWeight:'700', color:'#0f172a', borderLeft:'1px solid #e2e8f0'}}>৳{(Number(it.price) * it.quantity).toLocaleString()}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
 
+            {/* TOTALS + THANK YOU */}
+            <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:'20px', marginTop:'4px'}}>
+              <div style={{flex:1, background:'#fffbeb', border:'1px solid #fde68a', borderRadius:'10px', padding:'12px'}}>
+                <p style={{fontSize:'13px', fontWeight:'800', color:'#92400e', marginBottom:'5px'}}>🌸 ধন্যবাদ আমাদের বেছে নেওয়ার জন্য!</p>
+                <p style={{fontSize:'10px', color:'#78350f', lineHeight:'1.7'}}>
+                  PROMILAA BY SOPNIL-এ কেনাকাটা করার জন্য আপনাকে আন্তরিক ধন্যবাদ। পণ্য নিয়ে কোনো সমস্যা হলে ৩ দিনের মধ্যে যোগাযোগ করুন।
+                </p>
+                <p style={{fontSize:'9px', color:'#a16207', marginTop:'6px', fontStyle:'italic'}}>★ হ্যান্ডক্র্যাফটেড কাস্টম ডিজাইন | ১০০% প্রিমিয়াম কোয়ালিটি ★</p>
+              </div>
+              <div style={{width:'190px', border:'1px solid #e2e8f0', borderRadius:'10px', overflow:'hidden'}}>
+                <div style={{padding:'8px 12px', display:'flex', justifyContent:'space-between', fontSize:'11px', color:'#475569', borderBottom:'1px solid #e2e8f0'}}>
+                  <span>সাবটোটাল</span>
+                  <span style={{fontFamily:'monospace'}}>৳{(Number(selectedOrderForPrint.total) - Number(selectedOrderForPrint.shippingFee || 80)).toLocaleString()}</span>
+                </div>
+                <div style={{padding:'8px 12px', display:'flex', justifyContent:'space-between', fontSize:'11px', color:'#475569', borderBottom:'1px solid #e2e8f0'}}>
+                  <span>ডেলিভারি চার্জ</span>
+                  <span style={{fontFamily:'monospace'}}>৳{Number(selectedOrderForPrint.shippingFee || 80).toLocaleString()}</span>
+                </div>
+                <div style={{padding:'10px 12px', display:'flex', justifyContent:'space-between', fontSize:'13px', fontWeight:'800', background:'#0f172a', color:'#fff'}}>
+                  <span>সর্বমোট</span>
+                  <span style={{fontFamily:'monospace', color:'#fbbf24'}}>৳{Number(selectedOrderForPrint.total).toLocaleString()}</span>
                 </div>
               </div>
+            </div>
+
+            {/* FOOTER */}
+            <div style={{marginTop:'20px', borderTop:'1px solid #e2e8f0', paddingTop:'10px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+              <p style={{fontSize:'9px', color:'#94a3b8'}}>PROMILAA BY SOPNIL | সলিমুল্লাহ রোড, মোহাম্মদপুর, ঢাকা-১২০৭</p>
+              <p style={{fontSize:'9px', color:'#94a3b8', fontFamily:'monospace'}}>www.promilaa.com | 01601708251</p>
             </div>
 
           </div>
