@@ -15,6 +15,12 @@ out/
 build/
 dist/
 
+# Local Docs, Raw Media & Helper Scripts
+docs/
+md file/
+imagevideo/
+*.py
+
 # Logs
 logs
 *.log
