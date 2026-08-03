@@ -1,7 +1,6 @@
 "use client";
 
-import React from 'react';
-
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ShoppingBag, User, Search } from 'lucide-react';
 import { useCartStore } from '@/store/useCartStore';
@@ -10,7 +9,6 @@ import { buttonVariants } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import MobileNav from '@/components/layout/MobileNav';
 import AnnouncementBar from '@/components/layout/AnnouncementBar';
-import { useEffect, useState } from 'react';
 
 export default function Header() {
   const [mounted, setMounted] = useState(() => typeof window !== 'undefined');
