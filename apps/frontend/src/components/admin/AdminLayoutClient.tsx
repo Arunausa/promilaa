@@ -53,17 +53,39 @@ const NAV_GROUPS = [
 export default function AdminLayoutClient({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user } = useAuthStore();
-  const [isMounted, setIsMounted] = useState(false);
+  const user = useAuthStore((state) => state.user);
+  const [hasHydrated, setHasHydrated] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
-    if (!user || (user.role !== 'ADMIN' && user.role !== 'STAFF')) {
-      router.push('/login');
+    if (useAuthStore.persist.hasHydrated()) {
+      setHasHydrated(true);
     }
-  }, [user, router]);
+    const unsub = useAuthStore.persist.onFinishHydration(() => {
+      setHasHydrated(true);
+    });
+    return () => unsub();
+  }, []);
 
-  if (!isMounted || !user || (user.role !== 'ADMIN' && user.role !== 'STAFF')) {
+  useEffect(() => {
+    if (hasHydrated) {
+      if (!user || (user.role !== 'ADMIN' && user.role !== 'STAFF')) {
+        router.push('/login');
+      }
+    }
+  }, [hasHydrated, user, router]);
+
+  if (!hasHydrated) {
+    return (
+      <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center font-medium">
+        <div className="flex items-center gap-3">
+          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+          <span>Authenticating Admin Session...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user || (user.role !== 'ADMIN' && user.role !== 'STAFF')) {
     return null;
   }
 

@@ -12,8 +12,13 @@ async function getCategoryProducts(categorySlug: string, searchParams: any) {
 
     const where: any = {
       isPublished: true,
-      category: { slug: categorySlug },
     };
+
+    if (categorySlug && categorySlug !== 'all') {
+      where.category = {
+        slug: { equals: categorySlug, mode: 'insensitive' },
+      };
+    }
 
     if (minPrice !== undefined || maxPrice !== undefined) {
       where.basePrice = {
