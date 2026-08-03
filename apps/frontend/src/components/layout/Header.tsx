@@ -10,13 +10,12 @@ import MobileNav from '@/components/layout/MobileNav';
 import { useEffect, useState } from 'react';
 
 export default function Header() {
-  const [mounted, setMounted] = useState(false);
+  const [mounted, setMounted] = useState(() => typeof window !== 'undefined');
   const cartStore = useCartStore();
   const authStore = useAuthStore();
 
   useEffect(() => {
-    const timer = setTimeout(() => setMounted(true), 0);
-    return () => clearTimeout(timer);
+    setMounted(true);
   }, []);
 
   const totalItems = mounted ? cartStore.getTotalItems() : 0;
@@ -33,23 +32,23 @@ export default function Header() {
 
         {/* Logo */}
         <div className="flex items-center">
-          <Link href="/" className="font-bold text-2xl tracking-tighter">
+          <Link href="/" prefetch={true} className="font-bold text-2xl tracking-tighter">
             PROMILAA
           </Link>
         </div>
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center space-x-8 text-sm font-medium">
-          <Link href="/collections/kurti" className="transition-colors hover:text-foreground/80">
+          <Link href="/collections/kurti" prefetch={true} className="transition-colors hover:text-foreground/80">
             Kurti
           </Link>
-          <Link href="/collections/one-piece" className="transition-colors hover:text-foreground/80">
+          <Link href="/collections/one-piece" prefetch={true} className="transition-colors hover:text-foreground/80">
             One Piece
           </Link>
-          <Link href="/collections/two-piece" className="transition-colors hover:text-foreground/80">
+          <Link href="/collections/two-piece" prefetch={true} className="transition-colors hover:text-foreground/80">
             Two Piece
           </Link>
-          <Link href="/collections/three-piece" className="transition-colors hover:text-foreground/80">
+          <Link href="/collections/three-piece" prefetch={true} className="transition-colors hover:text-foreground/80">
             Three Piece
           </Link>
         </nav>
@@ -57,7 +56,8 @@ export default function Header() {
         {/* Actions */}
         <div className="flex items-center space-x-4">
           <Link 
-            href={user ? "/account" : "/login"}
+            href={user ? (user.role === 'ADMIN' || user.role === 'STAFF' ? "/admin" : "/account") : "/login"}
+            prefetch={true}
             className={buttonVariants({ variant: "ghost", size: "icon" })}
           >
             <User className="h-5 w-5" />
@@ -66,6 +66,7 @@ export default function Header() {
 
           <Link
             href="/search"
+            prefetch={true}
             className={buttonVariants({ variant: "ghost", size: "icon" })}
           >
             <Search className="h-5 w-5" />

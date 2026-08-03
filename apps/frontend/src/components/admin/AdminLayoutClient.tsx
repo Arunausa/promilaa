@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
 import {
-  LayoutDashboard, ShoppingCart, Package, CreditCard, Tags,
+  LayoutDashboard, Package, CreditCard, Tags,
   ShoppingBag, ImageIcon, Tag, Users, AlertTriangle, Warehouse,
   BarChart3, Settings, ChevronRight
 } from "lucide-react";
@@ -54,12 +54,11 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
   const pathname = usePathname();
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
-  const [hasHydrated, setHasHydrated] = useState(false);
+  const [hasHydrated, setHasHydrated] = useState(() => typeof window !== 'undefined' && useAuthStore.persist.hasHydrated());
 
   useEffect(() => {
     if (useAuthStore.persist.hasHydrated()) {
-      const timer = setTimeout(() => setHasHydrated(true), 0);
-      return () => clearTimeout(timer);
+      setHasHydrated(true);
     }
     const unsub = useAuthStore.persist.onFinishHydration(() => {
       setHasHydrated(true);
@@ -80,7 +79,7 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
       <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center font-medium">
         <div className="flex items-center gap-3">
           <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-          <span>Authenticating Admin Session...</span>
+          <span>Authenticating Session...</span>
         </div>
       </div>
     );
@@ -94,7 +93,7 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
     <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row">
       <aside className="w-full md:w-64 bg-slate-900 text-white flex-shrink-0 md:min-h-screen">
         <div className="p-6 border-b border-slate-800">
-          <Link href="/" className="block">
+          <Link href="/" prefetch={true} className="block">
             <span className="text-xs uppercase tracking-widest text-slate-500 block mb-0.5">Admin Panel</span>
             <span className="text-lg font-bold tracking-tighter text-white">PROMILAA</span>
           </Link>
@@ -114,6 +113,7 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
                     <Link
                       key={item.name}
                       href={item.href}
+                      prefetch={true}
                       className={`flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors group ${
                         isActive
                           ? "bg-white/10 text-white font-medium"
