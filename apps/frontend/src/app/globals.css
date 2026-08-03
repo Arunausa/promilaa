@@ -1,0 +1,87 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-geist-mono);
+  
+  --color-border: var(--border);
+  --color-input: var(--border);
+  --color-ring: var(--foreground);
+  
+  --color-primary: var(--foreground);
+  --color-primary-foreground: var(--background);
+  
+  --color-secondary: var(--muted);
+  --color-secondary-foreground: var(--foreground);
+  
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  
+  --color-destructive: var(--destructive);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+}
+
+:root {
+  /* Zara/COS Inspired Tokens */
+  --background: #FFFFFF;
+  --foreground: #111111;
+  --muted: #F5F4F2;
+  --muted-foreground: #6B6B6B;
+  --border: #E5E3E0;
+  --accent: #1A1A1A;
+  --accent-foreground: #FFFFFF;
+  
+  /* Status Colors */
+  --destructive: #B3261E;
+  --success: #2E6B4F;
+  --warning: #B8860B;
+
+  /* Form & UI basics map to the above */
+  --popover: #FFFFFF;
+  --popover-foreground: #111111;
+  --card: #FFFFFF;
+  --card-foreground: #111111;
+  
+  --radius: 0.25rem; /* Slightly sharp corners for fashion feel */
+}
+
+.dark {
+  --background: #111111;
+  --foreground: #FFFFFF;
+  --muted: #1A1A1A;
+  --muted-foreground: #A1A1A1;
+  --border: #333333;
+  --accent: #FFFFFF;
+  --accent-foreground: #111111;
+  
+  --popover: #111111;
+  --popover-foreground: #FFFFFF;
+  --card: #111111;
+  --card-foreground: #FFFFFF;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
