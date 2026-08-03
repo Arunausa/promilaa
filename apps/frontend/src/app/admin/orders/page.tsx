@@ -52,10 +52,126 @@ export default function AdminOrders() {
   };
 
   const handlePrintMemo = (order: any) => {
-    setSelectedOrderForPrint(order);
-    setTimeout(() => {
-      window.print();
-    }, 300);
+    const shippingFee = Number(order.shippingFee || 80);
+    const subtotal = Number(order.total) - shippingFee;
+    const itemRows = (order.items || []).map((it: any, idx: number) => {
+      const variantLabel = [it.variant?.size, it.variant?.color].filter(Boolean).join(' / ') || '—';
+      const rowBg = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
+      return `<tr style="background:${rowBg};border-bottom:1px solid #e2e8f0">
+        <td style="padding:8px 10px;font-weight:600;color:#0f172a">${it.product?.name || 'Ethnic Dress'}</td>
+        <td style="padding:8px 10px;color:#64748b;border-left:1px solid #e2e8f0">${variantLabel}</td>
+        <td style="padding:8px 10px;text-align:center;font-family:monospace;font-weight:700;border-left:1px solid #e2e8f0">${it.quantity}</td>
+        <td style="padding:8px 10px;text-align:right;font-family:monospace;border-left:1px solid #e2e8f0">&#2547;${Number(it.price).toLocaleString()}</td>
+        <td style="padding:8px 10px;text-align:right;font-family:monospace;font-weight:700;color:#0f172a;border-left:1px solid #e2e8f0">&#2547;${(Number(it.price) * it.quantity).toLocaleString()}</td>
+      </tr>`;
+    }).join('');
+
+    const html = `<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cash Memo - #${order.orderNumber}</title>
+  <style>
+    @page { size: A4 portrait; margin: 0; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #fff; color: #0f172a; }
+    .memo { width: 210mm; min-height: 297mm; padding: 14mm 16mm; }
+  </style>
+</head>
+<body>
+<div class="memo">
+  <!-- HEADER -->
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #0f172a;padding-bottom:12px;margin-bottom:16px">
+    <div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:26px;font-weight:900;letter-spacing:4px;color:#0f172a">PROMILAA</span>
+        <span style="font-size:9px;font-weight:800;letter-spacing:2px;background:#0f172a;color:#fff;padding:3px 8px;border-radius:4px">BY SOPNIL</span>
+      </div>
+      <p style="font-size:10px;color:#475569;margin-top:3px">&#128205; সলিমুল্লাহ রোড, মোহাম্মদপুর, ঢাকা-১২০৭</p>
+      <p style="font-size:10px;color:#475569">&#128222; 01601708251 | &#127760; www.promilaa.com</p>
+    </div>
+    <div style="text-align:right">
+      <div style="background:#0f172a;color:#fff;padding:10px 16px;border-radius:8px;display:inline-block">
+        <p style="font-size:9px;letter-spacing:3px;color:#94a3b8;margin-bottom:2px">CASH MEMO</p>
+        <p style="font-size:16px;font-weight:800;font-family:monospace">#${order.orderNumber}</p>
+      </div>
+      <p style="font-size:10px;color:#64748b;margin-top:5px">তারিখ: ${new Date(order.createdAt).toLocaleDateString('bn-BD', {day:'numeric',month:'long',year:'numeric'})}</p>
+    </div>
+  </div>
+
+  <!-- CUSTOMER & DELIVERY -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+    <div style="border:1px solid #e2e8f0;border-radius:8px;padding:10px;background:#f8fafc">
+      <p style="font-size:9px;font-weight:800;letter-spacing:2px;color:#94a3b8;margin-bottom:5px;text-transform:uppercase">গ্রাহকের তথ্য</p>
+      <p style="font-size:13px;font-weight:700;color:#0f172a">${order.shippingAddress?.fullName || 'Valued Customer'}</p>
+      <p style="font-size:11px;font-weight:700;color:#b45309;margin-top:2px;font-family:monospace">${order.guestPhone || ''}</p>
+      <p style="font-size:10px;color:#475569;margin-top:3px;line-height:1.6">${order.shippingAddress?.line1 || ''}<br/>${order.shippingAddress?.city || ''}</p>
+    </div>
+    <div style="border:1px solid #e2e8f0;border-radius:8px;padding:10px;background:#f8fafc">
+      <p style="font-size:9px;font-weight:800;letter-spacing:2px;color:#94a3b8;margin-bottom:5px;text-transform:uppercase">ডেলিভারি ও পেমেন্ট</p>
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:10px;color:#64748b">পেমেন্ট মেথড:</span>
+        <span style="font-size:10px;font-weight:700;background:#fef3c7;color:#92400e;padding:1px 8px;border-radius:20px">${order.payment?.method || 'Cash on Delivery'}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:10px;color:#64748b">ডেলিভারি এলাকা:</span>
+        <span style="font-size:10px;font-weight:700;color:#0f172a">${order.shippingAddress?.city || 'Dhaka'}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between">
+        <span style="font-size:10px;color:#64748b">স্ট্যাটাস:</span>
+        <span style="font-size:10px;font-weight:700;color:#065f46;background:#d1fae5;padding:1px 8px;border-radius:20px">${order.status}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ITEMS TABLE -->
+  <table style="width:100%;border-collapse:collapse;margin-bottom:16px;font-size:11px">
+    <thead>
+      <tr style="background:#0f172a;color:#fff">
+        <th style="padding:9px 10px;text-align:left;font-weight:700">পণ্যের নাম</th>
+        <th style="padding:9px 10px;text-align:left;font-weight:700;border-left:1px solid #1e293b">সাইজ / কালার</th>
+        <th style="padding:9px 10px;text-align:center;font-weight:700;border-left:1px solid #1e293b">পরিমাণ</th>
+        <th style="padding:9px 10px;text-align:right;font-weight:700;border-left:1px solid #1e293b">একক মূল্য</th>
+        <th style="padding:9px 10px;text-align:right;font-weight:700;border-left:1px solid #1e293b">মোট</th>
+      </tr>
+    </thead>
+    <tbody>${itemRows}</tbody>
+  </table>
+
+  <!-- TOTALS + THANK YOU -->
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:20px">
+    <div style="flex:1;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:12px">
+      <p style="font-size:13px;font-weight:800;color:#92400e;margin-bottom:5px">&#127800; ধন্যবাদ আমাদের বেছে নেওয়ার জন্য!</p>
+      <p style="font-size:10px;color:#78350f;line-height:1.7">PROMILAA BY SOPNIL-এ কেনাকাটা করার জন্য আপনাকে আন্তরিক ধন্যবাদ। পণ্য নিয়ে কোনো সমস্যা হলে ৩ দিনের মধ্যে যোগাযোগ করুন।</p>
+      <p style="font-size:9px;color:#a16207;margin-top:6px;font-style:italic">&#9733; হ্যান্ডক্র্যাফটেড কাস্টম ডিজাইন | ১০০% প্রিমিয়াম কোয়ালিটি &#9733;</p>
+    </div>
+    <div style="width:190px;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden">
+      <div style="padding:8px 12px;display:flex;justify-content:space-between;font-size:11px;color:#475569;border-bottom:1px solid #e2e8f0">
+        <span>সাবটোটাল</span><span style="font-family:monospace">&#2547;${subtotal.toLocaleString()}</span>
+      </div>
+      <div style="padding:8px 12px;display:flex;justify-content:space-between;font-size:11px;color:#475569;border-bottom:1px solid #e2e8f0">
+        <span>ডেলিভারি চার্জ</span><span style="font-family:monospace">&#2547;${shippingFee.toLocaleString()}</span>
+      </div>
+      <div style="padding:10px 12px;display:flex;justify-content:space-between;font-size:13px;font-weight:800;background:#0f172a;color:#fff">
+        <span>সর্বমোট</span><span style="font-family:monospace;color:#fbbf24">&#2547;${Number(order.total).toLocaleString()}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div style="margin-top:20px;border-top:1px solid #e2e8f0;padding-top:10px;display:flex;justify-content:space-between">
+    <p style="font-size:9px;color:#94a3b8">PROMILAA BY SOPNIL | সলিমুল্লাহ রোড, মোহাম্মদপুর, ঢাকা-১২০৭</p>
+    <p style="font-size:9px;color:#94a3b8;font-family:monospace">www.promilaa.com | 01601708251</p>
+  </div>
+</div>
+<script>window.onload = function(){ window.print(); window.onafterprint = function(){ window.close(); }; };<\/script>
+</body></html>`;
+
+    const printWin = window.open('', '_blank', 'width=900,height=700');
+    if (printWin) {
+      printWin.document.write(html);
+      printWin.document.close();
+    }
   };
 
   if (loading) return <div className="p-8 text-center text-slate-500 font-medium">অর্ডার ডাটা লোড হচ্ছে...</div>;
