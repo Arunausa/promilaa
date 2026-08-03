@@ -60,7 +60,7 @@ export default function Footer() {
         
         {/* Col 1: Brand Info */}
         <div className="space-y-4">
-          <h3 className="font-serif font-bold text-2xl text-white tracking-widest uppercase">PROMILAA</h3>
+          <h3 className="font-serif font-bold text-2xl text-white tracking-widest uppercase">PROMILAA BY SOPNIL</h3>
           <p className="text-xs text-slate-400 leading-relaxed font-light">
             Bangladeshi women&apos;s ethnic &amp; fusion wear brand. Offering handcrafted Kurtis, 1-Piece, 2-Piece &amp; 3-Piece collections for modern elegance.
           </p>

@@ -72,8 +72,8 @@ export default function AdminSettingsPage() {
   const [saving, setSaving] = useState(false);
 
   const [settings, setSettings] = useState<SettingsType>({
-    storeName: "Promilaa Ethnic Wear",
-    storePhone: "017XXXXXXXX",
+    storeName: "PROMILAA BY SOPNIL",
+    storePhone: "01601708251",
     storeEmail: "support@promilaa.com",
     bkashNumber: "017XXXXXXXX",
     nagadNumber: "017XXXXXXXX",

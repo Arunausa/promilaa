@@ -4,8 +4,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "About Us | Promilaa Ethnic Wear",
-  description: "Learn about Promilaa - Bangladesh's premium women's ethnic fashion brand specializing in Kurtis, 1-Piece, 2-Piece, and 3-Piece collections.",
+  title: "About Us | PROMILAA BY SOPNIL",
+  description: "Learn about PROMILAA BY SOPNIL - Bangladesh's premium women's ethnic fashion brand specializing in Kurtis, 1-Piece, 2-Piece, and 3-Piece collections.",
 };
 
 export default function AboutPage() {
@@ -20,7 +20,7 @@ export default function AboutPage() {
             Our Brand Story
           </div>
           <h1 className="text-4xl md:text-5xl font-serif font-bold text-slate-900 tracking-wider uppercase mb-4">
-            About Promilaa
+            About PROMILAA BY SOPNIL
           </h1>
           <div className="w-16 h-0.5 bg-amber-600 mx-auto mb-6" />
           <p className="text-slate-600 text-lg max-w-2xl mx-auto leading-relaxed">

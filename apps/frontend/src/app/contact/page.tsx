@@ -41,7 +41,6 @@ export default function ContactPage() {
               <div>
                 <h3 className="font-bold text-slate-900 text-sm mb-1">Customer Hotline</h3>
                 <p className="text-slate-600 text-sm font-medium">+880 1601-708251</p>
-                <p className="text-slate-600 text-sm font-medium">+880 1800-000000</p>
                 <p className="text-xs text-slate-400 mt-1">Everyday 10:00 AM - 10:00 PM</p>
               </div>
             </AnimatedSection>

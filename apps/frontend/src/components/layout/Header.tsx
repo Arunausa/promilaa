@@ -32,8 +32,8 @@ export default function Header() {
 
         {/* Logo */}
         <div className="flex items-center">
-          <Link href="/" prefetch={true} className="font-bold text-2xl tracking-tighter">
-            PROMILAA
+          <Link href="/" prefetch={true} className="font-bold text-xl md:text-2xl tracking-tighter flex items-center gap-1">
+            PROMILAA <span className="text-xs font-semibold bg-slate-900 text-white px-2 py-0.5 rounded tracking-normal">BY SOPNIL</span>
           </Link>
         </div>
 

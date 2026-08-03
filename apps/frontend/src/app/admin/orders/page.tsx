@@ -68,8 +68,8 @@ export default function AdminOrders() {
           <div className="border-2 border-slate-900 p-6 max-w-2xl mx-auto space-y-6">
             <div className="flex justify-between items-start border-b pb-4">
               <div>
-                <h1 className="text-2xl font-bold font-serif tracking-tight text-slate-900">PROMILAA ETHNIC WEAR</h1>
-                <p className="text-xs text-slate-600 mt-1">ঢাকা, বাংলাদেশ | সাপোর্ট: 017XXXXXXXX</p>
+                <h1 className="text-2xl font-bold font-serif tracking-tight text-slate-900">PROMILAA BY SOPNIL</h1>
+                <p className="text-xs text-slate-600 mt-1">ঢাকা, বাংলাদেশ | সাপোর্ট: 01601708251</p>
                 <p className="text-xs text-slate-600">ওয়েবসাইট: www.promilaa.com</p>
               </div>
               <div className="text-right">

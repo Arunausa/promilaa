@@ -21,10 +21,10 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://promilaa.com';
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Promilaa | Women's Ethnic Fashion | Salimullah Road, Mohammadpur, Dhaka",
-    template: "%s | Promilaa Ethnic Wear Mohammadpur Dhaka",
+    default: "PROMILAA BY SOPNIL | Women's Ethnic Fashion | Salimullah Road, Mohammadpur, Dhaka",
+    template: "%s | PROMILAA BY SOPNIL Mohammadpur Dhaka",
   },
-  description: "Promilaa is Bangladesh's premier women's ethnic fashion brand located at Salimullah Road, Mohammadpur, Dhaka. Shop designer Kurtis, 1-Piece, 2-Piece, 3-Piece & Festive Collections (৳590 - ৳850).",
+  description: "PROMILAA BY SOPNIL is Bangladesh's premier women's ethnic fashion brand located at Salimullah Road, Mohammadpur, Dhaka. Shop designer Kurtis, 1-Piece, 2-Piece, 3-Piece & Festive Collections (৳590 - ৳850).",
   keywords: [
     "Promilaa", "Promilaa Mohammadpur", "Promilaa Salimullah Road", "Women Ethnic Wear Mohammadpur",
     "Kurti Shop Mohammadpur Dhaka", "Three Piece Collection Mohammadpur", "One Piece Dress Dhaka",
