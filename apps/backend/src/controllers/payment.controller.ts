@@ -50,7 +50,7 @@ export const verifyPayment = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Invalid status' });
     }
 
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx: any) => {
       const payment = await tx.payment.update({
         where: { orderId },
         data: {
