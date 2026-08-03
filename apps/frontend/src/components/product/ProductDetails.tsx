@@ -377,6 +377,25 @@ export default function ProductDetails({ product }: { product: Product }) {
           </div>
         </div>
       )}
+
+      {/* MOBILE STICKY ACTION BAR FOR 1-TAP INSTANT CONVERSION */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 p-3 shadow-2xl flex items-center gap-2">
+        <Button
+          onClick={handleAddToCart}
+          variant="outline"
+          disabled={isOutOfStock}
+          className="flex-1 py-3 text-xs font-semibold border-slate-900 text-slate-900 rounded-xl"
+        >
+          <ShoppingBag className="w-4 h-4 mr-1" /> কার্টে যোগ করুন
+        </Button>
+        <Button
+          onClick={() => setShowQuickOrderModal(true)}
+          disabled={isOutOfStock}
+          className="flex-1 py-3 text-xs font-bold bg-amber-600 hover:bg-amber-500 text-slate-950 rounded-xl shadow-lg"
+        >
+          <Zap className="w-4 h-4 mr-1 fill-current" /> অর্ডার করুন
+        </Button>
+      </div>
     </div>
   );
 }

@@ -7,7 +7,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import {
   LayoutDashboard, Package, CreditCard, Tags,
   ShoppingBag, ImageIcon, Tag, Users, AlertTriangle, Warehouse,
-  BarChart3, Settings, ChevronRight
+  BarChart3, Settings, ChevronRight, Menu, X
 } from "lucide-react";
 
 const NAV_GROUPS = [
@@ -55,6 +55,7 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
   const [hasHydrated, setHasHydrated] = useState(() => typeof window !== 'undefined' && useAuthStore.persist.hasHydrated());
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     if (useAuthStore.persist.hasHydrated()) {
@@ -91,8 +92,28 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row">
-      <aside className="w-full md:w-64 bg-slate-900 text-white flex-shrink-0 md:min-h-screen">
-        <div className="p-6 border-b border-slate-800">
+      {/* MOBILE TOP BAR FOR ADMIN ON SMARTPHONES */}
+      <header className="md:hidden bg-slate-900 text-white p-4 flex items-center justify-between sticky top-0 z-50 shadow-md">
+        <Link href="/admin" prefetch={true} className="flex items-center gap-2">
+          <span className="text-xs uppercase tracking-widest text-slate-400 font-bold">Admin</span>
+          <span className="text-lg font-extrabold tracking-tighter text-white">PROMILAA</span>
+        </Link>
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="p-2 rounded-lg bg-slate-800 text-white hover:bg-slate-700 transition-colors"
+          aria-label="Toggle Admin Menu"
+        >
+          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
+      </header>
+
+      {/* SIDEBAR NAVIGATION (Desktop Sidebar + Mobile Collapsible Drawer) */}
+      <aside
+        className={`${
+          mobileMenuOpen ? "block" : "hidden"
+        } md:block w-full md:w-64 bg-slate-900 text-white flex-shrink-0 md:min-h-screen z-40`}
+      >
+        <div className="hidden md:block p-6 border-b border-slate-800">
           <Link href="/" prefetch={true} className="block">
             <span className="text-xs uppercase tracking-widest text-slate-500 block mb-0.5">Admin Panel</span>
             <span className="text-lg font-bold tracking-tighter text-white">PROMILAA</span>
@@ -114,6 +135,7 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
                       key={item.name}
                       href={item.href}
                       prefetch={true}
+                      onClick={() => setMobileMenuOpen(false)}
                       className={`flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors group ${
                         isActive
                           ? "bg-white/10 text-white font-medium"
@@ -134,7 +156,8 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
         </nav>
       </aside>
 
-      <main className="flex-1 p-6 md:p-8 overflow-y-auto min-h-screen">
+      {/* MAIN CONTENT AREA */}
+      <main className="flex-1 p-4 md:p-8 overflow-y-auto min-h-screen">
         {children}
       </main>
     </div>
