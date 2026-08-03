@@ -24,7 +24,7 @@ export async function PATCH(
     // Manual Option 2: Trigger SMS to customer ONLY when Admin manually confirms or ships the order!
     if (status === 'CONFIRMED' || status === 'SHIPPED') {
       await sendOrderConfirmationSMS(
-        updatedOrder.guestPhone,
+        updatedOrder.guestPhone || '',
         updatedOrder.orderNumber,
         Number(updatedOrder.total)
       );
