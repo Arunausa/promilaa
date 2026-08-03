@@ -1,35 +1,35 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Sparkles } from "lucide-react";
-import { apiFetch } from "@/lib/api";
+
+const DEFAULT_TEXT = "🌸 ক্যাশ অন ডেলিভারিতে শপিং করুন - সারা বাংলাদেশে হোম ডেলিভারি! 🌸";
 
 export default function AnnouncementBar() {
-  const [text, setText] = useState("🌸 ক্যাশ অন ডেলিভারিতে শপিং করুন - সারা বাংলাদেশে হোম ডেলিভারি! 🌸");
+  const [text, setText] = useState(DEFAULT_TEXT);
   const [enabled, setEnabled] = useState(true);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    // 1. Try LocalStorage
+    // Only read from LocalStorage — the settings page saves here on Save
     const local = localStorage.getItem("promilaa_admin_settings");
     if (local) {
       try {
         const parsed = JSON.parse(local);
         if (parsed.announcementText) setText(parsed.announcementText);
-        if (typeof parsed.announcementEnabled === 'boolean') setEnabled(parsed.announcementEnabled);
+        // Explicitly check for false — if user turned it off, respect that
+        if (parsed.announcementEnabled === false) {
+          setEnabled(false);
+        } else {
+          setEnabled(true);
+        }
       } catch (e) {}
     }
-
-    // 2. Fetch live settings from server
-    apiFetch<{ settings: any }>("/api/admin/settings")
-      .then((res) => {
-        if (res.settings) {
-          if (res.settings.announcementText) setText(res.settings.announcementText);
-          if (typeof res.settings.announcementEnabled === 'boolean') setEnabled(res.settings.announcementEnabled);
-        }
-      })
-      .catch(() => {});
+    setReady(true);
   }, []);
 
+  // Don't render until we've read localStorage (avoids flash)
+  if (!ready) return null;
   if (!enabled) return null;
 
   return (
