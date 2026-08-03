@@ -64,87 +64,96 @@ export default function AdminOrders() {
     <div className="space-y-6">
       {/* Printable Cash Memo Container (Hidden on screen, visible during window.print) */}
       {selectedOrderForPrint && (
-        <div className="hidden print:block fixed inset-0 bg-white p-10 z-50 text-slate-900 font-sans">
-          <div className="border-4 border-double border-slate-900 p-8 max-w-2xl mx-auto space-y-6 bg-amber-50/20 rounded-xl relative">
-            
-            {/* Top Brand Header */}
-            <div className="flex justify-between items-start border-b-2 border-slate-900 pb-5">
+        <div className="hidden print:block fixed inset-0 bg-white z-50 font-sans">
+          {/* A4 Page */}
+          <div style={{
+            width: '210mm',
+            minHeight: '297mm',
+            margin: '0 auto',
+            padding: '16mm 18mm',
+            backgroundColor: '#ffffff',
+            color: '#0f172a',
+          }}>
+
+            {/* ── HEADER ── */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              borderBottom: '3px solid #0f172a',
+              paddingBottom: '14px',
+              marginBottom: '18px',
+            }}>
               <div>
-                <h1 className="text-3xl font-bold font-serif tracking-widest text-slate-900">PROMILAA</h1>
-                <span className="text-xs font-bold uppercase tracking-widest bg-slate-900 text-white px-2.5 py-0.5 rounded">BY SOPNIL</span>
-                <p className="text-xs text-slate-600 mt-2 font-medium">📍 সলিমুল্লাহ রোড, মোহাম্মদপুর, ঢাকা-১২০৭</p>
-                <p className="text-xs text-slate-600 font-medium">📞 হটলাইন: 01601708251 | 🌐 www.promilaa.com</p>
-              </div>
-              <div className="text-right">
-                <div className="bg-slate-900 text-white font-mono px-4 py-2 rounded-lg inline-block">
-                  <p className="text-[10px] text-slate-400 uppercase tracking-widest font-sans font-bold">CASH MEMO</p>
-                  <p className="text-base font-bold">#{selectedOrderForPrint.orderNumber}</p>
+                <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+                  <span style={{fontSize: '28px', fontWeight: '900', letterSpacing: '4px', color: '#0f172a'}}>PROMILAA</span>
+                  <span style={{fontSize: '9px', fontWeight: '800', letterSpacing: '2px', background: '#0f172a', color: '#fff', padding: '3px 8px', borderRadius: '4px'}}>BY SOPNIL</span>
                 </div>
-                <p className="text-xs text-slate-600 font-medium mt-2">তারিখ: {new Date(selectedOrderForPrint.createdAt).toLocaleDateString("bn-BD")}</p>
+                <p style={{fontSize: '10px', color: '#475569', marginTop: '4px'}}>📍 সলিমুল্লাহ রোড, মোহাম্মদপুর, ঢাকা-১২০৭</p>
+                <p style={{fontSize: '10px', color: '#475569'}}>📞 01601708251 &nbsp;|&nbsp; 🌐 www.promilaa.com</p>
+              </div>
+              <div style={{textAlign: 'right'}}>
+                <div style={{background: '#0f172a', color: '#fff', padding: '10px 18px', borderRadius: '8px', display: 'inline-block'}}>
+                  <p style={{fontSize: '9px', letterSpacing: '3px', color: '#94a3b8', marginBottom: '2px'}}>CASH MEMO</p>
+                  <p style={{fontSize: '16px', fontWeight: '800', fontFamily: 'monospace'}}>#{selectedOrderForPrint.orderNumber}</p>
+                </div>
+                <p style={{fontSize: '10px', color: '#64748b', marginTop: '6px'}}>
+                  তারিখ: {new Date(selectedOrderForPrint.createdAt).toLocaleDateString('bn-BD', {day:'numeric', month:'long', year:'numeric'})}
+                </p>
               </div>
             </div>
 
-            {/* Customer & Shipping Details */}
-            <div className="grid grid-cols-2 gap-4 text-xs bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-              <div className="space-y-1">
-                <p className="font-bold text-slate-500 uppercase tracking-widest text-[10px]">গ্রাহকের নাম ও ঠিকানা:</p>
-                <p className="font-bold text-slate-900 text-sm">{selectedOrderForPrint.shippingAddress?.fullName || 'Valued Customer'}</p>
-                <p className="font-mono font-bold text-amber-900">{selectedOrderForPrint.guestPhone}</p>
-                <p className="text-slate-700 leading-relaxed">{selectedOrderForPrint.shippingAddress?.line1}, {selectedOrderForPrint.shippingAddress?.city}</p>
+            {/* ── CUSTOMER & DELIVERY INFO ── */}
+            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '20px'}}>
+              <div style={{border: '1px solid #e2e8f0', borderRadius: '8px', padding: '12px', background: '#f8fafc'}}>
+                <p style={{fontSize: '9px', fontWeight: '800', letterSpacing: '2px', color: '#94a3b8', marginBottom: '6px', textTransform: 'uppercase'}}>গ্রাহকের তথ্য</p>
+                <p style={{fontSize: '13px', fontWeight: '700', color: '#0f172a'}}>{selectedOrderForPrint.shippingAddress?.fullName || 'Valued Customer'}</p>
+                <p style={{fontSize: '11px', fontWeight: '700', color: '#b45309', marginTop: '3px', fontFamily: 'monospace'}}>{selectedOrderForPrint.guestPhone}</p>
+                <p style={{fontSize: '10px', color: '#475569', marginTop: '4px', lineHeight: '1.5'}}>
+                  {selectedOrderForPrint.shippingAddress?.line1}<br/>{selectedOrderForPrint.shippingAddress?.city}
+                </p>
               </div>
-              <div className="space-y-1 text-right">
-                <p className="font-bold text-slate-500 uppercase tracking-widest text-[10px]">পেমেন্ট ও পার্সেল স্ট্যাটাস:</p>
-                <p className="font-bold text-slate-900">পেমেন্ট মেথড: <span className="text-amber-800 bg-amber-100 px-2 py-0.5 rounded">{selectedOrderForPrint.payment?.method || 'Cash on Delivery'}</span></p>
-                <p className="text-slate-700 font-medium">ডেলিভারি এলাকা: {selectedOrderForPrint.shippingAddress?.city || 'Dhaka'}</p>
+              <div style={{border: '1px solid #e2e8f0', borderRadius: '8px', padding: '12px', background: '#f8fafc'}}>
+                <p style={{fontSize: '9px', fontWeight: '800', letterSpacing: '2px', color: '#94a3b8', marginBottom: '6px', textTransform: 'uppercase'}}>ডেলিভারি ও পেমেন্ট</p>
+                <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}>
+                  <span style={{fontSize: '10px', color: '#64748b'}}>পেমেন্ট মেথড:</span>
+                  <span style={{fontSize: '10px', fontWeight: '700', background: '#fef3c7', color: '#92400e', padding: '1px 8px', borderRadius: '20px'}}>{selectedOrderForPrint.payment?.method || 'Cash on Delivery'}</span>
+                </div>
+                <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}>
+                  <span style={{fontSize: '10px', color: '#64748b'}}>ডেলিভারি এলাকা:</span>
+                  <span style={{fontSize: '10px', fontWeight: '700', color: '#0f172a'}}>{selectedOrderForPrint.shippingAddress?.city || 'Dhaka'}</span>
+                </div>
+                <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                  <span style={{fontSize: '10px', color: '#64748b'}}>স্ট্যাটাস:</span>
+                  <span style={{fontSize: '10px', fontWeight: '700', color: '#065f46', background: '#d1fae5', padding: '1px 8px', borderRadius: '20px'}}>{selectedOrderForPrint.status}</span>
+                </div>
               </div>
             </div>
 
-            {/* Ordered Items Table */}
-            <table className="w-full text-xs text-left border-collapse border border-slate-300 rounded-lg overflow-hidden">
-              <thead className="bg-slate-900 text-white font-bold">
-                <tr>
-                  <th className="p-3 border-r border-slate-800">পণ্যের নাম (Product Name)</th>
-                  <th className="p-3 border-r border-slate-800 text-center">পরিমাণ</th>
-                  <th className="p-3 border-r border-slate-800 text-right">একক মূল্য</th>
-                  <th className="p-3 text-right">মোট টাকা</th>
+            {/* ── ITEMS TABLE ── */}
+            <table style={{width: '100%', borderCollapse: 'collapse', marginBottom: '20px', fontSize: '11px'}}>
+              <thead>
+                <tr style={{background: '#0f172a', color: '#fff'}}>
+                  <th style={{padding: '10px 12px', textAlign: 'left', fontWeight: '700'}}>পণ্যের নাম</th>
+                  <th style={{padding: '10px 12px', textAlign: 'left', fontWeight: '700', borderLeft: '1px solid #1e293b'}}>সাইজ / কালার</th>
+                  <th style={{padding: '10px 12px', textAlign: 'center', fontWeight: '700', borderLeft: '1px solid #1e293b'}}>পরিমাণ</th>
+                  <th style={{padding: '10px 12px', textAlign: 'right', fontWeight: '700', borderLeft: '1px solid #1e293b'}}>একক মূল্য</th>
+                  <th style={{padding: '10px 12px', textAlign: 'right', fontWeight: '700', borderLeft: '1px solid #1e293b'}}>মোট</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200 bg-white">
+              <tbody>
                 {selectedOrderForPrint.items?.map((it: any, idx: number) => (
-                  <tr key={idx} className="hover:bg-slate-50">
-                    <td className="p-3 border-r font-medium text-slate-900">{it.product?.name || 'Handcrafted Ethnic Dress'}</td>
-                    <td className="p-3 border-r text-center font-mono font-bold">{it.quantity}</td>
-                    <td className="p-3 border-r text-right font-mono">৳{it.price}</td>
-                    <td className="p-3 text-right font-mono font-bold text-slate-900">৳{it.price * it.quantity}</td>
+                  <tr key={idx} style={{borderBottom: '1px solid #e2e8f0', background: idx % 2 === 0 ? '#fff' : '#f8fafc'}}>
+                    <td style={{padding: '9px 12px', fontWeight: '600', color: '#0f172a'}}>{it.product?.name || 'Ethnic Dress'}</td>
+                    <td style={{padding: '9px 12px', color: '#64748b', borderLeft: '1px solid #e2e8f0'}}>{it.variant?.size || '—'} {it.variant?.color ? `/ ${it.variant.color}` : ''}</td>
+                    <td style={{padding: '9px 12px', textAlign: 'center', fontFamily: 'monospace', fontWeight: '700', borderLeft: '1px solid #e2e8f0'}}>{it.quantity}</td>
+                    <td style={{padding: '9px 12px', textAlign: 'right', fontFamily: 'monospace', borderLeft: '1px solid #e2e8f0'}}>৳{Number(it.price).toLocaleString()}</td>
+                    <td style={{padding: '9px 12px', textAlign: 'right', fontFamily: 'monospace', fontWeight: '700', color: '#0f172a', borderLeft: '1px solid #e2e8f0'}}>৳{(Number(it.price) * it.quantity).toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
 
-            {/* Calculations & Thank You Note */}
-            <div className="flex justify-between items-end pt-4">
-              <div className="max-w-xs space-y-2">
-                <div className="bg-amber-50 border border-amber-200 p-3 rounded-lg text-amber-900 text-xs leading-relaxed">
-                  <p className="font-bold">🌸 ধন্যবাদ!</p>
-                  <p className="text-[11px] text-amber-800">PROMILAA BY SOPNIL-এ শপিং করার জন্য আন্তরিক ধন্যবাদ। আপনার যেকোনো পরামর্শ বা সহযোগিতার জন্য আমাদের হটলাইনে যোগাযোগ করুন।</p>
-                </div>
-                <div className="text-[10px] text-slate-400 text-center font-serif">
-                  * হ্যান্ডমেড কাস্টম ডিজাইন | ১০০% প্রিমিয়াম কোয়ালিটি ফ্যাব্রিক *
-                </div>
-              </div>
-
-              <div className="text-right space-y-1 font-mono text-xs w-48 bg-white p-3 rounded-lg border border-slate-200">
-                <div className="flex justify-between text-slate-600">
-                  <span>সাবটোটাল:</span>
-                  <span>৳{selectedOrderForPrint.total - (selectedOrderForPrint.shippingFee || 80)}</span>
-                </div>
-                <div className="flex justify-between text-slate-600">
-                  <span>ডেলিভারি চার্জ:</span>
-                  <span>৳{selectedOrderForPrint.shippingFee || 80}</span>
-                </div>
-                <div className="flex justify-between text-sm font-bold border-t border-slate-900 pt-1.5 text-slate-900">
-                  <span>সর্বমোট প্রদেয়:</span>
-                  <span className="text-amber-900">৳{selectedOrderForPrint.total}</span>
                 </div>
               </div>
             </div>
