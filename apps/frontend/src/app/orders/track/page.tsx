@@ -63,9 +63,8 @@ export default function OrderTrackPage() {
     setOrder(null);
 
     try {
-      const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || '';
       const res = await fetch(
-        `${apiBase}/api/orders/track?orderNumber=${encodeURIComponent(orderNumber)}&phone=${encodeURIComponent(phone)}`
+        `/api/orders/track?orderNumber=${encodeURIComponent(orderNumber)}&phone=${encodeURIComponent(phone)}`
       );
       const data = await res.json();
 
