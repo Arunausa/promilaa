@@ -23,17 +23,10 @@ export default function AccountPage() {
     }
   }, [router]);
 
-  useEffect(() => {
-    if (user && accessToken && activeTab === "orders") {
-      fetchMyOrders();
-    }
-  }, [user, accessToken, activeTab]);
-
   const fetchMyOrders = async () => {
     setLoadingOrders(true);
     try {
-      const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || '';
-      const res = await fetch(`${apiBase}/api/orders/my-orders`, {
+      const res = await fetch(`/api/orders/my-orders`, {
         headers: { Authorization: `Bearer ${accessToken}` }
       });
       if (res.ok) {
@@ -46,6 +39,12 @@ export default function AccountPage() {
       setLoadingOrders(false);
     }
   };
+
+  useEffect(() => {
+    if (user && accessToken && activeTab === "orders") {
+      fetchMyOrders();
+    }
+  }, [user, accessToken, activeTab]);
 
   const handleLogout = () => {
     logout();

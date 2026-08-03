@@ -24,6 +24,11 @@ jobs:
         
     - name: Install dependencies
       run: npm ci
+
+    - name: Generate Prisma Client
+      run: npx prisma generate --schema=apps/frontend/prisma/schema.prisma
+      env:
+        DATABASE_URL: "postgresql://neondb_owner:npg_0AtjJzrf5elc@ep-holy-moon-ayyubz6w.c-5.us-east-2.aws.neon.tech/neondb?sslmode=require"
       
     - name: Lint Next.js App
       run: npm run lint --workspace=apps/frontend
@@ -33,3 +38,6 @@ jobs:
       
     - name: Build Next.js App
       run: npm run build --workspace=apps/frontend
+      env:
+        DATABASE_URL: "postgresql://neondb_owner:npg_0AtjJzrf5elc@ep-holy-moon-ayyubz6w.c-5.us-east-2.aws.neon.tech/neondb?sslmode=require"
+        NEXT_PUBLIC_API_BASE_URL: "https://promilaa.vercel.app"
