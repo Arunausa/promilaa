@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useAuthStore } from "@/store/useAuthStore";
 import {
   LayoutDashboard, ShoppingCart, Package, CreditCard, Tags,
   ShoppingBag, ImageIcon, Tag, Users, AlertTriangle, Warehouse,
@@ -50,6 +52,20 @@ const NAV_GROUPS = [
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user } = useAuthStore();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+    if (!user || (user.role !== 'ADMIN' && user.role !== 'STAFF')) {
+      router.push('/login');
+    }
+  }, [user, router]);
+
+  if (!isMounted || !user || (user.role !== 'ADMIN' && user.role !== 'STAFF')) {
+    return null; // Don't render anything while checking or if unauthorized
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row">

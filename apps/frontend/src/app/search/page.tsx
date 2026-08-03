@@ -38,7 +38,7 @@ function SearchContent() {
     setLoading(true);
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/products/search?q=${encodeURIComponent(q)}&limit=40`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001"}/api/products/search?q=${encodeURIComponent(q)}&limit=40`
       );
       const data = await res.json();
       setProducts(data.data || []);
