@@ -11,13 +11,15 @@ import { useEffect, useState } from 'react';
 
 export default function Header() {
   const [mounted, setMounted] = useState(false);
-  const totalItems = useCartStore((state) => state.getTotalItems());
-  const user = useAuthStore((state) => state.user);
+  const cartStore = useCartStore();
+  const authStore = useAuthStore();
 
-  // Avoid hydration mismatch for Zustand persistent store
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const totalItems = mounted ? cartStore.getTotalItems() : 0;
+  const user = mounted ? authStore.user : null;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

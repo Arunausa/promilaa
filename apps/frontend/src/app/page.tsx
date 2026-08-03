@@ -2,6 +2,7 @@ import Link from "next/link";
 import ProductCard from "@/components/product/ProductCard";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
 import HeroVideoSlider from "@/components/home/HeroVideoSlider";
+import ReelVideo from "@/components/home/ReelVideo";
 import { Star, ShieldCheck, Truck, RefreshCw, ArrowRight, Play, Sparkles } from "lucide-react";
 import prisma from "@/lib/prisma";
 
@@ -133,30 +134,7 @@ export default async function Home() {
               { src: "/media/video/3.mp4", label: "Traditional 3-Piece", tag: "Eid Range" },
             ].map((reel, i) => (
               <AnimatedSection key={i} delay={i * 0.15}>
-                <div className="relative aspect-[9/16] rounded-2xl overflow-hidden bg-slate-900 group shadow-xl border">
-                  <video
-                    src={reel.src}
-                    muted
-                    loop
-                    playsInline
-                    preload="metadata"
-                    onMouseEnter={(e) => e.currentTarget.play()}
-                    onMouseLeave={(e) => e.currentTarget.pause()}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 p-6 flex flex-col justify-between pointer-events-none">
-                    <div className="flex justify-between items-center">
-                      <span className="px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-semibold">
-                        {reel.tag}
-                      </span>
-                      <Play className="w-6 h-6 text-white/80 group-hover:scale-125 transition-transform" />
-                    </div>
-                    <div>
-                      <h4 className="text-white font-serif font-bold text-lg">{reel.label}</h4>
-                      <p className="text-slate-300 text-xs mt-1">Hover to preview reel</p>
-                    </div>
-                  </div>
-                </div>
+                <ReelVideo src={reel.src} label={reel.label} tag={reel.tag} />
               </AnimatedSection>
             ))}
           </div>
