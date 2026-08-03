@@ -70,6 +70,6 @@ export const uploadImage = async (
 
   await s3.send(command);
 
-  const publicBaseUrl = process.env.CLOUDFLARE_PUBLIC_URL || `${endpoint}/${bucketName}`;
+  const publicBaseUrl = process.env.CLOUDFLARE_PUBLIC_DOMAIN || process.env.CLOUDFLARE_PUBLIC_URL || `${endpoint}/${bucketName}`;
   return `${publicBaseUrl}/${uniqueFilename}`;
 };
