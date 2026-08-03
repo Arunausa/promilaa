@@ -4,7 +4,8 @@ import type { Metadata } from "next";
 
 async function getProduct(slug: string) {
   try {
-    const res = await fetch(`http://localhost:3001/api/products/${slug}`, {
+    const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
+    const res = await fetch(`${apiBase}/api/products/${slug}`, {
       next: { revalidate: 60 }, 
     });
     if (!res.ok) {

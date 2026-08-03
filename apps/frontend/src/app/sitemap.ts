@@ -20,7 +20,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Fetch dynamic products
   try {
-    const res = await fetch("http://localhost:3001/api/products?limit=100", { next: { revalidate: 3600 } });
+    const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
+    const res = await fetch(`${apiBase}/api/products?limit=100`, { next: { revalidate: 3600 } });
     if (res.ok) {
       const data = await res.json();
       const products = data.data || [];

@@ -6,7 +6,8 @@ import { Star, ShieldCheck, Truck, RefreshCw, ArrowRight, Play, Sparkles } from 
 
 async function getFeaturedProducts() {
   try {
-    const res = await fetch("http://localhost:3001/api/products?limit=12", {
+    const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
+    const res = await fetch(`${apiBase}/api/products?limit=12`, {
       next: { revalidate: 30 },
     });
     if (!res.ok) return [];

@@ -15,7 +15,8 @@ async function getCategoryProducts(categorySlug: string, searchParams: any) {
       ...(searchParams.page && { page: searchParams.page }),
     }).toString();
 
-    const res = await fetch(`http://localhost:3001/api/products?${query}`, {
+    const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
+    const res = await fetch(`${apiBase}/api/products?${query}`, {
       next: { revalidate: 60 },
     });
     if (!res.ok) return { products: [], totalCount: 0, totalPages: 1 };
