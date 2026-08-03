@@ -3,18 +3,23 @@ import ProductCard from "@/components/product/ProductCard";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
 import HeroVideoSlider from "@/components/home/HeroVideoSlider";
 import { Star, ShieldCheck, Truck, RefreshCw, ArrowRight, Play, Sparkles } from "lucide-react";
+import prisma from "@/lib/prisma";
 
 async function getFeaturedProducts() {
   try {
-    const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
-    const res = await fetch(`${apiBase}/api/products?limit=12`, {
-      next: { revalidate: 30 },
+    const products = await prisma.product.findMany({
+      where: { isPublished: true },
+      take: 12,
+      include: {
+        images: { orderBy: { position: 'asc' } },
+        variants: true,
+        category: { select: { name: true, slug: true } },
+      },
+      orderBy: { createdAt: 'desc' },
     });
-    if (!res.ok) return [];
-    const data = await res.json();
-    return data.data || [];
+    return products;
   } catch (error) {
-    console.error("Failed to fetch featured products:", error);
+    console.error("Failed to fetch featured products from Prisma:", error);
     return [];
   }
 }
@@ -29,100 +34,41 @@ export default async function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-slate-50">
       
-      {/* 1. Main Hero Section with Auto-Rotating 3 Videos */}
+      {/* HERO SECTION — Smooth Auto-Cycling Background Videos */}
       <HeroVideoSlider />
 
-      {/* 2. Brand Trust Features Banner */}
-      <section className="bg-white border-b border-slate-200 py-6 shadow-sm">
-        <div className="container mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 p-2">
-            <ShieldCheck className="w-6 h-6 text-amber-600" />
-            <div className="text-left">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900">100% Authentic</h4>
-              <p className="text-[11px] text-slate-500">Premium Bangladeshi Fabrics</p>
-            </div>
-          </div>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 p-2">
-            <Truck className="w-6 h-6 text-amber-600" />
-            <div className="text-left">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900">Nationwide Delivery</h4>
-              <p className="text-[11px] text-slate-500">Fast Shipping across BD</p>
-            </div>
-          </div>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 p-2">
-            <RefreshCw className="w-6 h-6 text-amber-600" />
-            <div className="text-left">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900">Easy Exchange</h4>
-              <p className="text-[11px] text-slate-500">Hassle-free size replacement</p>
-            </div>
-          </div>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 p-2">
-            <Star className="w-6 h-6 text-amber-600" />
-            <div className="text-left">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900">Trusted Brand</h4>
-              <p className="text-[11px] text-slate-500">10,000+ Happy Customers</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. Core Product Categories Grid */}
-      <section className="py-20 container mx-auto px-4">
-        <AnimatedSection>
-          <div className="text-center mb-14">
-            <span className="text-xs font-bold uppercase tracking-widest text-amber-600">Curated Lineup</span>
-            <h2 className="text-3xl md:text-4xl font-serif font-bold text-slate-900 tracking-wider uppercase mt-1 mb-3">
-              Shop By Category
-            </h2>
-            <div className="w-16 h-0.5 bg-amber-600 mx-auto" />
-          </div>
+      {/* CATEGORY SHOWCASE GRID */}
+      <section className="py-16 md:py-24 px-4 container mx-auto">
+        <AnimatedSection className="text-center mb-12 max-w-2xl mx-auto">
+          <span className="text-xs uppercase tracking-widest text-amber-700 font-semibold mb-2 block">
+            Exclusive Selection
+          </span>
+          <h2 className="text-3xl md:text-5xl font-serif font-bold text-slate-900 tracking-tight mb-4">
+            Shop By Category
+          </h2>
+          <p className="text-slate-600 text-sm md:text-base leading-relaxed">
+            Explore our thoughtfully curated traditional ethnic wear crafted for modern elegance.
+          </p>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           {[
-            { 
-              title: "Kurti Collection", 
-              subtitle: "Designer Single Kurtis",
-              img: "/media/kurti/1.jpeg", 
-              link: "/collections/kurti" 
-            },
-            { 
-              title: "One Piece", 
-              subtitle: "Floral & Fusion Dresses",
-              img: "/media/one_piece/1.jpeg", 
-              link: "/collections/one-piece" 
-            },
-            { 
-              title: "Two Piece Set", 
-              subtitle: "Kurti & Trouser Sets",
-              img: "/media/two_piece/1.jpeg", 
-              link: "/collections/two-piece" 
-            },
-            { 
-              title: "Three Piece Suit", 
-              subtitle: "Dupatta & Suit Sets",
-              img: "/media/three_piece/1.jpeg", 
-              link: "/collections/three-piece" 
-            }
+            { title: "Kurti Collection", slug: "kurti", count: "10+ Styles", img: "/media/kurti/1.jpeg" },
+            { title: "One Piece Dress", slug: "one-piece", count: "7+ Styles", img: "/media/one_piece/1.jpeg" },
+            { title: "Two Piece Suit", slug: "two-piece", count: "8+ Styles", img: "/media/two_piece/1.jpeg" },
+            { title: "Three Piece Suit", slug: "three-piece", count: "16+ Styles", img: "/media/three_piece/1.jpeg" },
           ].map((cat, idx) => (
-            <AnimatedSection key={cat.title} delay={idx * 0.1}>
-              <Link href={cat.link} className="group relative block aspect-[3/4] overflow-hidden rounded-md shadow-md bg-slate-100">
-                <img 
-                  src={cat.img} 
-                  alt={cat.title} 
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" 
+            <AnimatedSection key={cat.slug} delay={idx * 0.1}>
+              <Link href={`/collections/${cat.slug}`} className="group relative aspect-[3/4] block rounded-xl overflow-hidden shadow-md">
+                <img
+                  src={cat.img}
+                  alt={cat.title}
+                  loading="lazy"
+                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent group-hover:from-slate-950/90 transition-colors duration-300" />
-                <div className="absolute bottom-6 left-6 right-6">
-                  <span className="text-amber-300 text-[11px] font-semibold tracking-widest uppercase mb-1 block">
-                    {cat.subtitle}
-                  </span>
-                  <h3 className="text-xl font-serif font-bold text-white uppercase tracking-wider mb-2">
-                    {cat.title}
-                  </h3>
-                  <div className="flex items-center gap-2 text-white text-xs font-semibold tracking-widest uppercase opacity-80 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300">
-                    Explore Now <ArrowRight className="w-3.5 h-3.5" />
-                  </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 text-white transition-opacity duration-300">
+                  <span className="text-xs font-medium text-amber-300 uppercase tracking-widest mb-1">{cat.count}</span>
+                  <h3 className="text-xl font-serif font-bold group-hover:translate-x-1 transition-transform">{cat.title}</h3>
                 </div>
               </Link>
             </AnimatedSection>
@@ -130,102 +76,86 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 4. DEDICATED FESTIVE EDIT SPOTLIGHT SECTION */}
-      <section className="py-20 bg-gradient-to-br from-amber-950 via-slate-950 to-slate-900 text-white overflow-hidden relative">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#f59e0b_1px,transparent_1px)] [background-size:16px_16px]" />
-        
+      {/* FESTIVE COLLECTION SPOTLIGHT */}
+      <section className="py-20 bg-gradient-to-br from-slate-950 via-slate-900 to-amber-950 text-white overflow-hidden relative">
         <div className="container mx-auto px-4 relative z-10">
-          <AnimatedSection className="text-center max-w-3xl mx-auto mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/20 border border-amber-400/30 text-amber-300 text-xs font-semibold uppercase tracking-widest mb-4">
-              <Sparkles className="w-3.5 h-3.5" />
-              Special Occasion Spotlight
-            </div>
-            <h2 className="text-4xl md:text-5xl font-serif font-bold tracking-widest uppercase mb-4 text-amber-100">
-              The Festive Collection '26
-            </h2>
-            <p className="text-slate-300 text-sm md:text-base font-light max-w-xl mx-auto leading-relaxed">
-              Exquisite velvet borders, handcrafted zari embroidery, and pure silk ensembles created for Eid, weddings, and grand celebrations.
-            </p>
-          </AnimatedSection>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-12 mb-12">
+            <AnimatedSection className="max-w-xl">
+              <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-semibold uppercase tracking-widest mb-4 border border-amber-500/30">
+                <Sparkles className="w-3.5 h-3.5" /> Eid & Wedding Special
+              </span>
+              <h2 className="text-4xl md:text-6xl font-serif font-bold tracking-tight mb-4 text-white">
+                The Festive Collection &apos;26
+              </h2>
+              <p className="text-slate-300 text-base leading-relaxed">
+                Opulent fabrics, hand-detailed embroidery, and rich festive colors designed for grand celebrations.
+              </p>
+            </AnimatedSection>
 
-          {/* Festive Banner Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-            {[
-              { title: "Zari Silk Suits", img: "/media/festive/1.jpeg", price: "৳780", link: "/collections/festive" },
-              { title: "Velvet Celebration Suits", img: "/media/festive/2.jpeg", price: "৳850", link: "/collections/festive" },
-              { title: "Royal Dupatta Sets", img: "/media/festive/4.jpeg", price: "৳820", link: "/collections/festive" },
-            ].map((item, idx) => (
-              <AnimatedSection key={idx} delay={idx * 0.1}>
-                <Link href={item.link} className="group relative block aspect-[3/4] overflow-hidden rounded-lg border border-amber-500/20 shadow-2xl">
-                  <img 
-                    src={item.img} 
-                    alt={item.title} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
-                  <div className="absolute bottom-6 left-6 right-6">
-                    <span className="text-amber-400 text-xs font-bold uppercase tracking-wider block mb-1">
-                      Starting From {item.price}
-                    </span>
-                    <h3 className="text-2xl font-serif font-bold text-white uppercase mb-3">
-                      {item.title}
-                    </h3>
-                    <span className="inline-flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-amber-300 group-hover:translate-x-1 transition-transform">
-                      Shop Festive Collection <ArrowRight className="w-3.5 h-3.5" />
-                    </span>
-                  </div>
-                </Link>
-              </AnimatedSection>
-            ))}
+            <AnimatedSection delay={0.2}>
+              <Link
+                href="/collections/festive"
+                className="inline-flex items-center gap-3 bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold px-8 py-4 rounded-full transition-all duration-300 shadow-lg shadow-amber-900/40 hover:scale-105"
+              >
+                Explore Festive Range <ArrowRight className="w-5 h-5" />
+              </Link>
+            </AnimatedSection>
           </div>
 
-          <div className="text-center">
-            <Link 
-              href="/collections/festive"
-              className="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-500 text-white px-10 py-4 text-xs font-semibold tracking-widest uppercase transition-all rounded-sm shadow-xl hover:shadow-amber-600/30"
-            >
-              Explore Full Festive Collection <ArrowRight className="w-4 h-4" />
-            </Link>
+          {/* Festive Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {festiveProducts.map((product: any) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
           </div>
         </div>
       </section>
 
-      {/* 5. Interactive Video Reels Showcase */}
-      <section className="py-16 bg-slate-900 text-white border-y border-slate-800">
+      {/* REELS / BEHIND THE SCENES SHOWCASE */}
+      <section className="py-20 bg-white border-y">
         <div className="container mx-auto px-4">
-          <AnimatedSection className="text-center mb-12">
-            <span className="text-xs font-bold uppercase tracking-widest text-amber-400">Behind The Scenes</span>
-            <h2 className="text-3xl font-serif font-bold tracking-wider uppercase text-white mt-1">
-              Boutique Walkthrough & Live Fits
+          <AnimatedSection className="text-center mb-12 max-w-xl mx-auto">
+            <span className="text-xs uppercase tracking-widest text-amber-700 font-semibold mb-2 block">
+              Live Boutique Showcase
+            </span>
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-slate-900 mb-3">
+              Promilaa In Motion
             </h2>
-            <p className="text-slate-400 text-sm max-w-xl mx-auto mt-2 font-light">
-              Experience the fabric movement, fit, and craftsmanship of Promilaa in action.
+            <p className="text-slate-600 text-sm">
+              Watch our handcrafted ethnic wear modeled live inside our studio.
             </p>
           </AnimatedSection>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { title: "Boutique Experience", video: "/media/video/1.mp4", poster: "/media/three_piece/2.jpeg" },
-              { title: "Boutique Walkthrough", video: "/media/video/2.mp4", poster: "/media/festive/1.jpeg" },
-              { title: "South Asian Elegance", video: "/media/video/3.mp4", poster: "/media/kurti/3.jpeg" },
-            ].map((v, i) => (
-              <AnimatedSection key={i} delay={i * 0.1} className="relative group rounded-lg overflow-hidden bg-slate-950 border border-slate-800 aspect-[9/14]">
-                <video 
-                  autoPlay 
-                  loop 
-                  muted 
-                  playsInline
-                  poster={v.poster}
-                  className="w-full h-full object-cover opacity-85 group-hover:scale-105 transition-transform duration-700"
-                >
-                  <source src={v.video} type="video/mp4" />
-                </video>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
-                <div className="absolute bottom-6 left-6 right-6">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-amber-300 text-[10px] font-bold uppercase mb-2">
-                    <Play className="w-3 h-3 fill-amber-300" /> Promilaa Live
+              { src: "/media/video/1.mp4", label: "Festive Suit Walk", tag: "Vol. 4" },
+              { src: "/media/video/2.mp4", label: "Boutique Collection", tag: "Kurti Edition" },
+              { src: "/media/video/3.mp4", label: "Traditional 3-Piece", tag: "Eid Range" },
+            ].map((reel, i) => (
+              <AnimatedSection key={i} delay={i * 0.15}>
+                <div className="relative aspect-[9/16] rounded-2xl overflow-hidden bg-slate-900 group shadow-xl border">
+                  <video
+                    src={reel.src}
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    onMouseEnter={(e) => e.currentTarget.play()}
+                    onMouseLeave={(e) => e.currentTarget.pause()}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 p-6 flex flex-col justify-between pointer-events-none">
+                    <div className="flex justify-between items-center">
+                      <span className="px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-semibold">
+                        {reel.tag}
+                      </span>
+                      <Play className="w-6 h-6 text-white/80 group-hover:scale-125 transition-transform" />
+                    </div>
+                    <div>
+                      <h4 className="text-white font-serif font-bold text-lg">{reel.label}</h4>
+                      <p className="text-slate-300 text-xs mt-1">Hover to preview reel</p>
+                    </div>
                   </div>
-                  <h4 className="text-lg font-serif font-bold text-white uppercase">{v.title}</h4>
                 </div>
               </AnimatedSection>
             ))}
@@ -233,130 +163,56 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 6. Luxury Lookbook Feature Section */}
-      <section className="py-20 bg-white text-slate-900 overflow-hidden">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            
-            <AnimatedSection className="space-y-6">
-              <span className="text-xs font-bold uppercase tracking-widest text-amber-600">Handcrafted Perfection</span>
-              <h2 className="text-3xl md:text-5xl font-serif font-bold tracking-wide leading-tight">
-                Authentic Craftsmanship & Traditional Aesthetics
-              </h2>
-              <p className="text-slate-600 text-sm md:text-base leading-relaxed font-light">
-                Every Promilaa creation celebrates the rich heritage of Bangladeshi textiles. From delicate hand embroidery to rich silk weaves, our collection is curated for women who value quality and effortless style.
-              </p>
-
-              <div className="grid grid-cols-2 gap-6 pt-4 border-t border-slate-200">
-                <div>
-                  <h3 className="text-2xl font-serif font-bold text-amber-600">100%</h3>
-                  <p className="text-xs text-slate-500 uppercase tracking-wider">Breathable Fabrics</p>
-                </div>
-                <div>
-                  <h3 className="text-2xl font-serif font-bold text-amber-600">Custom</h3>
-                  <p className="text-xs text-slate-500 uppercase tracking-wider">Bangladeshi Tailoring</p>
-                </div>
-              </div>
-
-              <div className="pt-4">
-                <Link 
-                  href="/collections/festive"
-                  className="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white px-8 py-3.5 text-xs font-semibold tracking-widest uppercase transition-all rounded-sm shadow-md"
-                >
-                  View Festive Catalogue <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
-            </AnimatedSection>
-
-            <AnimatedSection delay={0.2} className="grid grid-cols-2 gap-4">
-              <div className="space-y-4">
-                <img 
-                  src="/media/festive/2.jpeg" 
-                  alt="Festive Suit" 
-                  className="w-full aspect-[4/5] object-cover rounded-md shadow-lg"
-                />
-                <img 
-                  src="/media/two_piece/2.jpeg" 
-                  alt="Two piece detail" 
-                  className="w-full aspect-[4/5] object-cover rounded-md shadow-lg"
-                />
-              </div>
-              <div className="space-y-4 pt-8">
-                <img 
-                  src="/media/three_piece/3.jpeg" 
-                  alt="Three piece Model" 
-                  className="w-full aspect-[4/5] object-cover rounded-md shadow-lg"
-                />
-                <img 
-                  src="/media/one_piece/2.jpeg" 
-                  alt="One piece detail" 
-                  className="w-full aspect-[4/5] object-cover rounded-md shadow-lg"
-                />
-              </div>
-            </AnimatedSection>
-
-          </div>
-        </div>
-      </section>
-
-      {/* 7. Featured Catalog Grid (New Arrivals) */}
-      <section className="py-24 bg-slate-50 border-t">
-        <div className="container mx-auto px-4">
-          <AnimatedSection className="flex flex-col md:flex-row items-center justify-between mb-14 border-b pb-6">
-            <div>
-              <span className="text-xs font-bold uppercase tracking-widest text-amber-600">Fresh Drops</span>
-              <h2 className="text-3xl font-serif font-bold tracking-wider uppercase text-slate-900">New Arrivals</h2>
-            </div>
-            <Link 
-              href="/collections/kurti" 
-              className="hidden md:inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase hover:text-amber-600 transition-colors border-b border-black pb-1"
-            >
-              View All Products <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </AnimatedSection>
-          
-          {newArrivals.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-              {newArrivals.map((product: any, idx: number) => (
-                <AnimatedSection key={product.id} delay={idx * 0.05}>
-                  <ProductCard product={product} />
-                </AnimatedSection>
-              ))}
-            </div>
-          ) : (
-            <AnimatedSection>
-              <p className="text-muted-foreground text-center py-12">Loading products catalog...</p>
-            </AnimatedSection>
-          )}
-          
-          <div className="mt-12 text-center md:hidden">
-            <Link 
-              href="/collections/kurti" 
-              className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase border-b border-black pb-1"
-            >
-              View All Products <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* 8. Customer Testimonials */}
-      <section className="py-20 bg-amber-50/50 border-t border-b border-amber-100">
-        <div className="container mx-auto px-4">
-          <AnimatedSection className="text-center max-w-3xl mx-auto">
-            <div className="flex justify-center gap-1 mb-6">
-              {[1,2,3,4,5].map(i => <Star key={i} className="w-5 h-5 fill-amber-500 text-amber-500" />)}
-            </div>
-            <h2 className="text-2xl md:text-3xl font-serif leading-relaxed mb-6 text-slate-900 font-medium">
-              "প্রমিলা এর থ্রি-পিস ও কুর্তির কাপড় আর সেলাই এর মান সত্যিই অসাধারণ! ছবির সাথে বাস্তবের কাপড়ের কোয়ালিটি ১০০% মিল।"
+      {/* NEW ARRIVALS CATALOG GRID */}
+      <section className="py-20 px-4 container mx-auto">
+        <AnimatedSection className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+          <div>
+            <span className="text-xs uppercase tracking-widest text-amber-700 font-semibold mb-2 block">
+              Just Arrived
+            </span>
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-slate-900">
+              New Arrivals
             </h2>
-            <p className="text-xs font-bold tracking-widest uppercase text-amber-800">
-              — নুশরাত জাহান, ঢাকা
-            </p>
-          </AnimatedSection>
+          </div>
+          <Link
+            href="/collections/kurti"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-slate-900 hover:text-amber-700 transition-colors"
+          >
+            View All Collections <ArrowRight className="w-4 h-4" />
+          </Link>
+        </AnimatedSection>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+          {newArrivals.map((product: any) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
         </div>
       </section>
 
+      {/* BRAND VALUES / TRUST BADGES */}
+      <section className="py-16 bg-slate-900 text-white border-t border-slate-800">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
+            {[
+              { icon: Truck, title: "All Bangladesh Delivery", desc: "Dhaka ৳80 | Outside Dhaka ৳150" },
+              { icon: ShieldCheck, title: "Cash On Delivery", desc: "Pay safely after receiving products" },
+              { icon: RefreshCw, title: "7 Days Size Exchange", desc: "Hassle-free size replacement policy" },
+              { icon: Star, title: "Authentic Quality", desc: "100% premium fabric & embroidery" },
+            ].map((badge, idx) => {
+              const Icon = badge.icon;
+              return (
+                <AnimatedSection key={idx} delay={idx * 0.1} className="flex flex-col items-center p-4">
+                  <div className="p-4 rounded-full bg-white/5 mb-4 text-amber-400 border border-white/10">
+                    <Icon className="w-6 h-6" />
+                  </div>
+                  <h4 className="font-serif font-bold text-base mb-1">{badge.title}</h4>
+                  <p className="text-slate-400 text-xs">{badge.desc}</p>
+                </AnimatedSection>
+              );
+            })}
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

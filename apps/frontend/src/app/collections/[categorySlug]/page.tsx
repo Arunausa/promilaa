@@ -2,33 +2,53 @@ import ProductCard from "@/components/product/ProductCard";
 import CollectionFilters from "./CollectionFilters";
 import { PackageX } from "lucide-react";
 import type { Metadata } from "next";
+import prisma from "@/lib/prisma";
 
 async function getCategoryProducts(categorySlug: string, searchParams: any) {
   try {
-    const query = new URLSearchParams({
-      categorySlug,
-      limit: '50',
-      ...(searchParams.sort && { sort: searchParams.sort }),
-      ...(searchParams.minPrice && { minPrice: searchParams.minPrice }),
-      ...(searchParams.maxPrice && { maxPrice: searchParams.maxPrice }),
-      ...(searchParams.inStock && { inStock: searchParams.inStock }),
-      ...(searchParams.page && { page: searchParams.page }),
-    }).toString();
+    const minPrice = searchParams.minPrice ? Number(searchParams.minPrice) : undefined;
+    const maxPrice = searchParams.maxPrice ? Number(searchParams.maxPrice) : undefined;
+    const inStockOnly = searchParams.inStock === 'true';
 
-    const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
-    const res = await fetch(`${apiBase}/api/products?${query}`, {
-      next: { revalidate: 60 },
+    const where: any = {
+      isPublished: true,
+      category: { slug: categorySlug },
+    };
+
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      where.basePrice = {
+        ...(minPrice !== undefined && { gte: minPrice }),
+        ...(maxPrice !== undefined && { lte: maxPrice }),
+      };
+    }
+
+    let products = await prisma.product.findMany({
+      where,
+      include: {
+        images: { orderBy: { position: 'asc' } },
+        variants: true,
+        category: { select: { name: true, slug: true } },
+      },
+      orderBy: searchParams.sort === 'price-asc' 
+        ? { basePrice: 'asc' } 
+        : searchParams.sort === 'price-desc' 
+        ? { basePrice: 'desc' } 
+        : { createdAt: 'desc' },
     });
-    if (!res.ok) return { products: [], totalCount: 0, totalPages: 1 };
-    
-    const data = await res.json();
+
+    if (inStockOnly) {
+      products = products.filter(p => p.variants.some(v => v.stock > 0));
+    }
+
+    const totalCount = products.length;
+
     return {
-      products: data.data || [],
-      totalCount: data.pagination?.total || 0,
-      totalPages: data.pagination?.totalPages || 1
+      products,
+      totalCount,
+      totalPages: Math.ceil(totalCount / 50) || 1
     };
   } catch (error) {
-    console.error("Failed to fetch products:", error);
+    console.error("Failed to fetch collection products from database:", error);
     return { products: [], totalCount: 0, totalPages: 1 };
   }
 }

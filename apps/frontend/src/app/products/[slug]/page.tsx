@@ -1,21 +1,32 @@
 import ProductDetails from "@/components/product/ProductDetails";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import prisma from "@/lib/prisma";
 
 async function getProduct(slug: string) {
   try {
-    const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
-    const res = await fetch(`${apiBase}/api/products/${slug}`, {
-      next: { revalidate: 60 }, 
+    const rawProduct = await prisma.product.findUnique({
+      where: { slug },
+      include: {
+        images: { orderBy: { position: 'asc' } },
+        variants: true,
+        category: { select: { name: true, slug: true } },
+      },
     });
-    if (!res.ok) {
-      if (res.status === 404) return null;
-      throw new Error('Failed to fetch product');
-    }
-    const data = await res.json();
-    return data.product || data;
+
+    if (!rawProduct) return null;
+
+    return {
+      ...rawProduct,
+      basePrice: Number(rawProduct.basePrice),
+      compareAtPrice: rawProduct.compareAtPrice ? Number(rawProduct.compareAtPrice) : null,
+      variants: rawProduct.variants.map(v => ({
+        ...v,
+        price: v.price ? Number(v.price) : null,
+      })),
+    };
   } catch (error) {
-    console.error("Error fetching product:", error);
+    console.error("Error fetching product from Prisma:", error);
     return null;
   }
 }
@@ -67,7 +78,7 @@ export default async function ProductPage({
     notFound();
   }
 
-  const displayPrice = Number(product.price ?? product.basePrice ?? 0);
+  const displayPrice = Number(product.basePrice ?? 0);
   const images = product.images?.map((i: any) => i.url) || [];
 
   // Google Rich Snippets JSON-LD Structured Data
