@@ -20,7 +20,7 @@ async function getProduct(slug: string) {
       ...rawProduct,
       basePrice: Number(rawProduct.basePrice),
       compareAtPrice: rawProduct.compareAtPrice ? Number(rawProduct.compareAtPrice) : null,
-      variants: rawProduct.variants.map(v => ({
+      variants: rawProduct.variants.map((v: any) => ({
         ...v,
         price: v.price ? Number(v.price) : null,
       })),
