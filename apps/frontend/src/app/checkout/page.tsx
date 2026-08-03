@@ -130,7 +130,7 @@ export default function CheckoutPage() {
             
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Phone Number *</label>
-              <input required name="phone" value={formData.phone} onChange={handleChange} className="w-full p-2 border rounded-md" placeholder="e.g. 01601708251" />
+              <input required name="phone" value={formData.phone} onChange={handleChange} className="w-full p-2 border rounded-md" placeholder="১১ ডিজিটের মোবাইল নম্বর" />
             </div>
 
             <div>

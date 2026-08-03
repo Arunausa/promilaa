@@ -100,7 +100,7 @@ export default function OrderTrackPage() {
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                placeholder="e.g. 01601708251"
+                placeholder="১১ ডিজিটের মোবাইল নম্বর"
                 className="w-full px-4 py-3 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
               />
             </div>
