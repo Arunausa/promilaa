@@ -35,18 +35,19 @@ export async function checkPhoneNumberFraud(phone: string, orderId?: string): Pr
     }, orderId);
   }
 
-  // 2. Steadfast Courier Check
+  // 2. Steadfast / BD Courier Fraud API Check
   const steadfastUser = process.env.STEADFAST_USER;
   const steadfastPassword = process.env.STEADFAST_PASSWORD;
+  const fraudApiKey = process.env.FRAUD_API_KEY;
 
-  if (steadfastUser && steadfastPassword) {
+  if ((steadfastUser && steadfastPassword) || fraudApiKey) {
     try {
       const res = await fetch('https://api.steadfast.com.bd/v1/fraud-check', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Api-Key': steadfastPassword,
-          'Api-Secret': steadfastUser,
+          'Api-Key': steadfastPassword || fraudApiKey || '',
+          'Api-Secret': steadfastUser || 'promilaa-secret',
         },
         body: JSON.stringify({ phone: cleanPhone }),
         signal: AbortSignal.timeout(4000),
