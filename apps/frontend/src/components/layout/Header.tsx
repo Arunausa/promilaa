@@ -1,5 +1,7 @@
 "use client";
 
+import React from 'react';
+
 import Link from 'next/link';
 import { ShoppingBag, User, Search } from 'lucide-react';
 import { useCartStore } from '@/store/useCartStore';
@@ -23,7 +25,7 @@ export default function Header() {
   const user = mounted ? authStore.user : null;
 
   return (
-    <>
+    <React.Fragment>
       <AnnouncementBar />
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -94,6 +96,6 @@ export default function Header() {
           </div>
         </div>
       </header>
-    </>
+    </React.Fragment>
   );
 }
