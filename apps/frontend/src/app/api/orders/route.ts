@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { checkPhoneNumberFraud } from '@/lib/fraudChecker';
-import { sendOrderConfirmationSMS } from '@/lib/smsService';
 
 export async function POST(req: Request) {
   try {
@@ -76,16 +75,11 @@ export async function POST(req: Request) {
       },
     });
 
-    // 1. Run Multi-Courier Fraud Checker (Steadfast, Pathao, RedX, Paperfly, Carrybee engine)
+    // 1. Run Multi-Courier Fraud Checker Engine
     const fraudResult = await checkPhoneNumberFraud(phone, order.id);
 
-    // 2. Smart SMS Trigger: Send SMS automatically ONLY IF the order is NOT High Risk!
-    // High Risk orders suppress SMS to protect SMS credits and require Admin Verification.
-    if (fraudResult.status !== 'HIGH') {
-      await sendOrderConfirmationSMS(phone, order.orderNumber, Number(order.total));
-    } else {
-      console.log(`[SMS Engine] Order #${order.orderNumber} flagged HIGH RISK. Automatic SMS suppressed for Admin manual review.`);
-    }
+    // Manual Option 2: Automatic SMS is DISABLED. Admin will review fraud score and send SMS manually upon status confirmation.
+    console.log(`[Order API] Order #${order.orderNumber} created. SMS waiting for Admin manual confirmation.`);
 
     return NextResponse.json({
       success: true,
