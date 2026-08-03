@@ -79,8 +79,13 @@ export async function POST(req: Request) {
     // 1. Run Multi-Courier Fraud Checker (Steadfast, Pathao, RedX, Paperfly, Carrybee engine)
     const fraudResult = await checkPhoneNumberFraud(phone, order.id);
 
-    // 2. Trigger Automated SMS Order Confirmation
-    await sendOrderConfirmationSMS(phone, order.orderNumber, Number(order.total));
+    // 2. Smart SMS Trigger: Send SMS automatically ONLY IF the order is NOT High Risk!
+    // High Risk orders suppress SMS to protect SMS credits and require Admin Verification.
+    if (fraudResult.status !== 'HIGH') {
+      await sendOrderConfirmationSMS(phone, order.orderNumber, Number(order.total));
+    } else {
+      console.log(`[SMS Engine] Order #${order.orderNumber} flagged HIGH RISK. Automatic SMS suppressed for Admin manual review.`);
+    }
 
     return NextResponse.json({
       success: true,
