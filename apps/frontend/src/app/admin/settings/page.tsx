@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Save, Store, CreditCard, Truck, Megaphone, CheckCircle2, ShieldCheck, Lock } from "lucide-react";
+import { Save, Store, CreditCard, Truck, Megaphone, CheckCircle2, ShieldCheck, Lock, MessageSquare, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 type SettingsType = {
@@ -16,13 +16,12 @@ type SettingsType = {
   announcementEnabled: boolean;
   announcementText: string;
   fraudbdApiKey: string;
-  steadfastApiKey: string;
-  steadfastSecretKey: string;
-  pathaoClientId: string;
-  pathaoClientSecret: string;
+  steadfastUser: string;
+  steadfastPassword: string;
   pathaoUsername: string;
   pathaoPassword: string;
-  redxApiToken: string;
+  fbPixelId: string;
+  smsApiToken: string;
 };
 
 // SectionTitle moved outside to module scope
@@ -75,21 +74,20 @@ export default function AdminSettingsPage() {
     storeName: "PROMILAA BY SOPNIL",
     storePhone: "01601708251",
     storeEmail: "support@promilaa.com",
-    bkashNumber: "017XXXXXXXX",
-    nagadNumber: "017XXXXXXXX",
-    rocketNumber: "017XXXXXXXX",
+    bkashNumber: "01601708251",
+    nagadNumber: "01601708251",
+    rocketNumber: "01601708251",
     shippingDhaka: "80",
     shippingOutsideDhaka: "150",
     announcementEnabled: true,
     announcementText: "🌸 ক্যাশ অন ডেলিভারিতে শপিং করুন - সারা বাংলাদেশে হোম ডেলিভারি! 🌸",
     fraudbdApiKey: "",
-    steadfastApiKey: "",
-    steadfastSecretKey: "",
-    pathaoClientId: "",
-    pathaoClientSecret: "",
+    steadfastUser: "",
+    steadfastPassword: "",
     pathaoUsername: "",
     pathaoPassword: "",
-    redxApiToken: "",
+    fbPixelId: "",
+    smsApiToken: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -110,17 +108,17 @@ export default function AdminSettingsPage() {
   };
 
   return (
-    <div className="max-w-4xl space-y-8">
+    <div className="max-w-4xl space-y-8 pb-12">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Store & System Settings</h1>
-          <p className="text-xs text-slate-500 mt-1">শপের জেনারেল সেটিংস, ফ্রড চেক এপিআই কি ও কুরিয়ার তথ্য ব্যবস্থাপনা</p>
+          <h1 className="text-2xl font-bold text-slate-900">PROMILAA BY SOPNIL Admin Control</h1>
+          <p className="text-xs text-slate-500 mt-1">শপের জেনারেল সেটিংস, কুরিয়ার একাউন্ট লগইন, SMS ও ফেসবুক পিক্সেল ব্যবস্থাপনা</p>
         </div>
 
         {saved && (
           <div className="flex items-center gap-2 text-emerald-700 bg-emerald-50 border border-emerald-200 px-4 py-2 rounded-xl text-sm font-semibold animate-in fade-in">
             <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-            সেটিংস সফলভাবে সংরক্ষিত হয়েছে!
+            সেটিংস সফলভাবে সেভ হয়েছে!
           </div>
         )}
       </div>
@@ -132,9 +130,9 @@ export default function AdminSettingsPage() {
             <Lock className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="font-bold text-sm text-amber-400">এপিআই সিকিউরিটি ও এনক্রিপশন সিস্টেম (Encrypted Admin Storage)</h3>
+            <h3 className="font-bold text-sm text-amber-400">১০০% সিকিউর এডমিন ড্যাশবোর্ড কন্ট্রোল</h3>
             <p className="text-xs text-slate-300 leading-relaxed mt-1">
-              আপনার ফ্রড চেক API Keys (FraudBD, Steadfast, Pathao, RedX) এডমিন প্যানেলের মাধ্যমে সুরক্ষিত থাকে। যখনই আপনি নতুন কুরিয়ার একাউন্ট করবেন, এডমিন সেটিংস প্যানেল থেকে এপিআই কী ও সিক্রেট পাসওয়ার্ড পরিবর্তন করতে পারবেন।
+              আপনার Steadfast কুরিয়ার একাউন্টের লগইন তথ্য, Greenweb SMS Token এবং Facebook Pixel ID সব আপনি সরাসরি এই এডমিন পেজ থেকেই ম্যানেজ করতে পারবেন। কোনো সার্ভার কোডে ঢুকতে হবে না।
             </p>
           </div>
         </div>
@@ -142,60 +140,64 @@ export default function AdminSettingsPage() {
         {/* Courier & Fraud API Settings */}
         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
           <SectionTitle 
-            icon={ShieldCheck} 
-            title="Courier Fraud Checker API Credentials (কুরিয়ার এপিআই সেটিংস)" 
-            subtitle="FraudBD বা Steadfast/Pathao মার্চেন্ট প্যানেল থেকে এপিআই কী এনে এখানে দিন"
+            icon={Truck} 
+            title="Steadfast Courier Account & Fraud Checker (কুরিয়ার লগইন তথ্য)" 
+            subtitle="আপনার Steadfast কুরিয়ারের মার্চেন্ট প্যানেল লগইন মোবাইল নম্বর ও পাসওয়ার্ড এখানে দিন"
           />
 
           <div className="space-y-6">
-            {/* FraudBD API (Active Primary Engine) */}
-            <div className="p-4 bg-amber-50/50 border border-amber-200 rounded-xl space-y-3">
+            {/* Steadfast Direct Login */}
+            <div className="p-4 bg-emerald-50/50 border border-emerald-200 rounded-xl space-y-3">
               <div className="flex items-center justify-between">
-                <h4 className="font-bold text-xs uppercase tracking-wider text-amber-900 flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span> FraudBD Courier Check API (https://fraudbd.com)
+                <h4 className="font-bold text-xs uppercase tracking-wider text-emerald-900 flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> Steadfast Courier Direct Login & 1-Click Booking
                 </h4>
-                <span className="text-[10px] bg-amber-200 text-amber-900 px-2.5 py-0.5 rounded-full font-bold">Active Engine</span>
+                <span className="text-[10px] bg-emerald-200 text-emerald-900 px-2.5 py-0.5 rounded-full font-bold">Active Courier</span>
               </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Field label="Steadfast Username (Phone or Email)" name="steadfastUser" placeholder="01601708251" value={settings.steadfastUser} onChange={handleChange} />
+                <Field label="Steadfast Account Password" name="steadfastPassword" placeholder="••••••••" type="password" value={settings.steadfastPassword} onChange={handleChange} />
+              </div>
+            </div>
+
+            {/* FraudBD API */}
+            <div className="p-4 bg-slate-50 border rounded-xl space-y-3">
+              <h4 className="font-bold text-xs uppercase tracking-wider text-slate-800 flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-amber-600" /> FraudBD Multi-Courier Guard API (Optional)
+              </h4>
               <Field 
-                label="FraudBD API Key" 
+                label="FraudBD API Key (https://fraudbd.com)" 
                 name="fraudbdApiKey" 
-                placeholder="fraudbd_live_xxxxxxxxx" 
+                placeholder="6f5a0bfcc142b07190191e2bc..." 
                 type="password" 
                 value={settings.fraudbdApiKey} 
                 onChange={handleChange} 
               />
             </div>
+          </div>
+        </div>
 
-            {/* Steadfast */}
+        {/* SMS Gateway & Marketing Trackers */}
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+          <SectionTitle 
+            icon={MessageSquare} 
+            title="Automated SMS & Marketing Integration (এসএমএস ও ফেসবুক পিক্সেল)" 
+            subtitle="গ্রাহকের মোবাইলে অটোমেটিক এসএমএস পাঠানো এবং ফেসবুক এডস ট্র্যাকিং সেটিংস"
+          />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="p-4 bg-slate-50 border rounded-xl space-y-3">
               <h4 className="font-bold text-xs uppercase tracking-wider text-slate-800 flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Steadfast Courier Fraud Checker API (Optional)
+                <MessageSquare className="w-4 h-4 text-blue-600" /> SMS Gateway Token (Greenweb / BulkSMS BD)
               </h4>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Field label="Steadfast API Key" name="steadfastApiKey" placeholder="st_live_xxxxxxxxx" value={settings.steadfastApiKey} onChange={handleChange} />
-                <Field label="Steadfast Secret Key" name="steadfastSecretKey" placeholder="st_secret_xxxxxxxxx" type="password" value={settings.steadfastSecretKey} onChange={handleChange} />
-              </div>
+              <Field label="Greenweb SMS API Token" name="smsApiToken" placeholder="greenweb_token_xxxxxx" type="password" value={settings.smsApiToken} onChange={handleChange} />
             </div>
 
-            {/* Pathao */}
             <div className="p-4 bg-slate-50 border rounded-xl space-y-3">
               <h4 className="font-bold text-xs uppercase tracking-wider text-slate-800 flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-500"></span> Pathao Courier Fraud Checker API (Optional)
+                <Target className="w-4 h-4 text-indigo-600" /> Facebook Pixel ID (Meta Ads Tracking)
               </h4>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Field label="Pathao Client ID" name="pathaoClientId" placeholder="client_id_xxxx" value={settings.pathaoClientId} onChange={handleChange} />
-                <Field label="Pathao Client Secret" name="pathaoClientSecret" placeholder="client_secret_xxxx" type="password" value={settings.pathaoClientSecret} onChange={handleChange} />
-                <Field label="Pathao Username (Email)" name="pathaoUsername" placeholder="your_email@pathao.com" value={settings.pathaoUsername} onChange={handleChange} />
-                <Field label="Pathao Password" name="pathaoPassword" placeholder="••••••••" type="password" value={settings.pathaoPassword} onChange={handleChange} />
-              </div>
-            </div>
-
-            {/* RedX */}
-            <div className="p-4 bg-slate-50 border rounded-xl space-y-3">
-              <h4 className="font-bold text-xs uppercase tracking-wider text-slate-800 flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-rose-500"></span> RedX Courier API (Optional)
-              </h4>
-              <Field label="RedX Access Token" name="redxApiToken" placeholder="redx_bearer_token_xxxx" type="password" value={settings.redxApiToken} onChange={handleChange} />
+              <Field label="Facebook Pixel ID (15-digits)" name="fbPixelId" placeholder="123456789012345" value={settings.fbPixelId} onChange={handleChange} />
             </div>
           </div>
         </div>
@@ -204,8 +206,8 @@ export default function AdminSettingsPage() {
         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
           <SectionTitle icon={Store} title="Store Information (শপের তথ্য)" />
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <Field label="Store Name" name="storeName" placeholder="Promilaa" value={settings.storeName} onChange={handleChange} />
-            <Field label="Support Phone" name="storePhone" placeholder="017XXXXXXXX" type="tel" value={settings.storePhone} onChange={handleChange} />
+            <Field label="Store Name" name="storeName" placeholder="PROMILAA BY SOPNIL" value={settings.storeName} onChange={handleChange} />
+            <Field label="Support Phone" name="storePhone" placeholder="01601708251" type="tel" value={settings.storePhone} onChange={handleChange} />
             <Field label="Support Email" name="storeEmail" placeholder="support@promilaa.com" type="email" value={settings.storeEmail} onChange={handleChange} />
           </div>
         </div>
@@ -218,9 +220,9 @@ export default function AdminSettingsPage() {
             subtitle="কাস্টমারদের চেকআউট পেজে এই নম্বরগুলো সেন্ড মানির জন্য দেখানো হবে"
           />
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <Field label="bKash Personal Number" name="bkashNumber" placeholder="017XXXXXXXX" type="tel" value={settings.bkashNumber} onChange={handleChange} />
-            <Field label="Nagad Personal Number" name="nagadNumber" placeholder="017XXXXXXXX" type="tel" value={settings.nagadNumber} onChange={handleChange} />
-            <Field label="Rocket Personal Number" name="rocketNumber" placeholder="017XXXXXXXX" type="tel" value={settings.rocketNumber} onChange={handleChange} />
+            <Field label="bKash Personal Number" name="bkashNumber" placeholder="01601708251" type="tel" value={settings.bkashNumber} onChange={handleChange} />
+            <Field label="Nagad Personal Number" name="nagadNumber" placeholder="01601708251" type="tel" value={settings.nagadNumber} onChange={handleChange} />
+            <Field label="Rocket Personal Number" name="rocketNumber" placeholder="01601708251" type="tel" value={settings.rocketNumber} onChange={handleChange} />
           </div>
         </div>
 
@@ -257,7 +259,7 @@ export default function AdminSettingsPage() {
                 name="announcementText"
                 value={settings.announcementText}
                 onChange={handleChange}
-                placeholder="যেমন: ফ্রিতে ডেলিভারি পেতে ৫টি ড্রেস অর্ডার করুন!"
+                placeholder="যেমন: ফ্রিতে ডেলিভারি পেতে ৩টি ড্রেস অর্ডার করুন!"
                 className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
               />
             </div>
