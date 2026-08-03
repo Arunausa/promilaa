@@ -45,8 +45,11 @@ export default function CheckoutPage() {
             district: formData.district,
             items: items.map((it) => ({
               id: it.id,
+              name: it.name,
+              price: it.price,
               quantity: it.quantity,
-              product: it.product,
+              size: it.size,
+              color: it.color,
             })),
             subtotal: getTotalPrice(),
           }),
