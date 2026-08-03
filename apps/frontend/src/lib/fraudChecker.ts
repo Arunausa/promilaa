@@ -10,14 +10,10 @@ export interface FraudCheckResult {
   rawData?: any;
 }
 
-/**
- * Multi-Courier Fraud Checking Engine
- * Directly integrated with Official FraudBD API (https://fraudbd.com/api-documentation)
- */
 export async function checkPhoneNumberFraud(phone: string, orderId?: string): Promise<FraudCheckResult> {
   const cleanPhone = phone.trim();
 
-  // 1. Internal Order History Check (Previous returned/cancelled orders)
+  // 1. Internal Database Order History Check
   const previousOrders = await prisma.order.findMany({
     where: { guestPhone: cleanPhone },
     select: { status: true },
@@ -35,8 +31,8 @@ export async function checkPhoneNumberFraud(phone: string, orderId?: string): Pr
     }, orderId);
   }
 
-  // 2. Official FraudBD API Integration (https://fraudbd.com/api-documentation)
-  const fraudApiKey = process.env.FRAUD_API_KEY || "6f5a0bfcc142b07190191e2bc8b97c53c24e8f3a6ad0ed8ea1a33b7c400163e4";
+  // 2. FraudBD API Integration (Server Environment Only)
+  const fraudApiKey = process.env.FRAUD_API_KEY;
 
   if (fraudApiKey) {
     try {
@@ -62,7 +58,6 @@ export async function checkPhoneNumberFraud(phone: string, orderId?: string): Pr
           const cancel = totalSummary.cancel || 0;
           const successRate = totalSummary.successRate ?? (total > 0 ? (success / total) * 100 : 100);
 
-          // Pathao specific rating check if available
           const pathaoRisk = summaries.Pathao?.risk_level;
 
           let riskScore = 10;
@@ -94,7 +89,80 @@ export async function checkPhoneNumberFraud(phone: string, orderId?: string): Pr
     }
   }
 
-  // 3. Phone Format Validation Fallback
+  // 3. Steadfast Direct Courier API Check
+  const steadfastUser = process.env.STEADFAST_USER;
+  const steadfastPassword = process.env.STEADFAST_PASSWORD;
+
+  if (steadfastUser && steadfastPassword) {
+    try {
+      const res = await fetch('https://api.steadfast.com.bd/v1/fraud-check', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Api-Key': steadfastPassword,
+          'Api-Secret': steadfastUser,
+        },
+        body: JSON.stringify({ phone: cleanPhone }),
+        signal: AbortSignal.timeout(4000),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const riskScore = data.risk_score || data.fraud_score || 0;
+        let status: FraudRiskLevel = 'LOW';
+        if (riskScore > 70) status = 'HIGH';
+        else if (riskScore > 30) status = 'MEDIUM';
+
+        return saveAndReturn(cleanPhone, {
+          status,
+          riskScore,
+          provider: 'Steadfast Courier',
+          reason: riskScore > 30 ? `Steadfast reported risk score of ${riskScore}` : 'Steadfast check passed',
+          rawData: data,
+        }, orderId);
+      }
+    } catch (e) {
+      console.warn('Steadfast check skipped or failed:', e);
+    }
+  }
+
+  // 4. Pathao Direct Courier API Check
+  const pathaoUser = process.env.PATHAO_USER;
+  const pathaoPassword = process.env.PATHAO_PASSWORD;
+
+  if (pathaoUser && pathaoPassword) {
+    try {
+      const res = await fetch('https://api-hermes.pathao.com/aladdin/api/v1/issue-tracker/fraud-check', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${pathaoPassword}`,
+        },
+        body: JSON.stringify({ phone_number: cleanPhone }),
+        signal: AbortSignal.timeout(4000),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const riskScore = data.data?.fraud_score || 0;
+        let status: FraudRiskLevel = 'LOW';
+        if (riskScore > 70) status = 'HIGH';
+        else if (riskScore > 30) status = 'MEDIUM';
+
+        return saveAndReturn(cleanPhone, {
+          status,
+          riskScore,
+          provider: 'Pathao Courier',
+          reason: riskScore > 30 ? `Pathao reported risk score of ${riskScore}` : 'Pathao check passed',
+          rawData: data,
+        }, orderId);
+      }
+    } catch (e) {
+      console.warn('Pathao check skipped or failed:', e);
+    }
+  }
+
+  // 5. Phone Format Validation Check
   const isValidBDPhone = /^01[3-9]\d{8}$/.test(cleanPhone);
   if (!isValidBDPhone) {
     return saveAndReturn(cleanPhone, {

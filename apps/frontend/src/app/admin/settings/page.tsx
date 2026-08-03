@@ -82,7 +82,7 @@ export default function AdminSettingsPage() {
     shippingOutsideDhaka: "150",
     announcementEnabled: true,
     announcementText: "🌸 ক্যাশ অন ডেলিভারিতে শপিং করুন - সারা বাংলাদেশে হোম ডেলিভারি! 🌸",
-    fraudbdApiKey: "6f5a0bfcc142b07190191e2bc8b97c53c24e8f3a6ad0ed8ea1a33b7c400163e4",
+    fraudbdApiKey: "",
     steadfastApiKey: "",
     steadfastSecretKey: "",
     pathaoClientId: "",
@@ -159,7 +159,7 @@ export default function AdminSettingsPage() {
               <Field 
                 label="FraudBD API Key" 
                 name="fraudbdApiKey" 
-                placeholder="6f5a0bfcc142b07190191e2bc8b97c53c24e8f3a6ad0ed8ea1a33b7c400163e4" 
+                placeholder="fraudbd_live_xxxxxxxxx" 
                 type="password" 
                 value={settings.fraudbdApiKey} 
                 onChange={handleChange} 
