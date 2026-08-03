@@ -1,4 +1,3 @@
-import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_ACCESS_SECRET || 'promilaa-secret-key-2026';
@@ -25,7 +24,7 @@ export async function verifyAdminAuth(req: Request): Promise<AdminSession | null
     }
 
     return decoded;
-  } catch (error) {
+  } catch {
     return null;
   }
 }
