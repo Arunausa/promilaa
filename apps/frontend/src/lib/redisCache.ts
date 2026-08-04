@@ -60,7 +60,16 @@ export const cacheSet = async (key: string, data: any, ttlSeconds: number = 60):
 export const cacheDel = async (keyPrefixOrPattern: string): Promise<void> => {
   try {
     if (redis) {
-      await redis.del(keyPrefixOrPattern);
+      // BUG 10 FIX: Use SCAN to find all keys matching the prefix pattern
+      let cursor = 0;
+      do {
+        const result = await redis.scan(cursor, { match: `${keyPrefixOrPattern}*`, count: 100 });
+        cursor = result[0];
+        const keys = result[1] as string[];
+        if (keys.length > 0) {
+          await Promise.all(keys.map(k => redis!.del(k)));
+        }
+      } while (cursor !== 0);
     }
   } catch (err) {
     console.error('[RedisCache DEL Error]', err);

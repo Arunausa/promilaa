@@ -103,7 +103,7 @@ export default function CheckoutPage() {
   if (items.length === 0) return <div className="text-center py-24">Your cart is empty.</div>;
 
   const subtotal = getTotalPrice();
-  const shipping = formData.district.toLowerCase() === 'dhaka' ? 60 : 120;
+  const shipping = formData.district.toLowerCase() === 'dhaka' ? 80 : 150;
   const total = subtotal + shipping;
 
   return (
@@ -228,17 +228,6 @@ export default function CheckoutPage() {
               <span>৳{shipping}</span>
             </div>
 
-            {/* Coupon Section */}
-            <div className="flex gap-2 py-3 border-t mt-2">
-              <input 
-                placeholder="Discount code" 
-                className="flex-1 p-2 border rounded-md text-sm" 
-              />
-              <Button type="button" variant="outline" className="text-sm px-4">
-                Apply
-              </Button>
-            </div>
-            
             <div className="border-t pt-4 flex justify-between font-bold text-lg">
               <span>Total</span>
               <span>৳{total}</span>

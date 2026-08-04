@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 
-export const revalidate = 10; // Cache for 10 seconds across CDN/Vercel edge
+// Force dynamic — never cache this route (announcement bar needs fresh data)
+export const dynamic = 'force-dynamic';
 
 interface StoreSettingRow {
   id: string;
@@ -39,7 +40,7 @@ export async function GET() {
 
     return NextResponse.json(publicSettings, {
       headers: {
-        'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=59',
+        'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
       }
     });
   } catch (error) {

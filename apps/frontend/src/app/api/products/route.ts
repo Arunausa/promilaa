@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { cacheGet, cacheSet, cacheDel } from '@/lib/redisCache';
+import { verifyAdminAuth } from '@/lib/adminAuth';
 
 export async function GET(req: Request) {
   try {
@@ -53,6 +54,12 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  // BUG 5 FIX: Require admin auth for product creation
+  const admin = await verifyAdminAuth(req);
+  if (!admin) {
+    return NextResponse.json({ error: 'Unauthorized access' }, { status: 401 });
+  }
+
   try {
     const body = await req.json();
     const { name, slug, description, basePrice, categoryId, sku, variants, images } = body;

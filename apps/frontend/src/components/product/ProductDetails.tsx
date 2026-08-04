@@ -98,7 +98,7 @@ export default function ProductDetails({ product }: { product: Product }) {
             fullName,
             phone,
             district,
-            city: district === "Dhaka" ? "Dhaka" : "Outside Dhaka",
+            city: district,
             line1: address,
           },
           paymentMethod: "COD",

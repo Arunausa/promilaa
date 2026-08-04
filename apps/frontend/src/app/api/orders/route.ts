@@ -67,7 +67,8 @@ export async function POST(req: Request) {
       const isInsideDhaka = shippingAddress.district?.toLowerCase().includes('dhaka') || shippingAddress.city?.toLowerCase().includes('dhaka');
       const shippingFee = isInsideDhaka ? 80 : 150;
       const total = subtotal + shippingFee;
-      const orderNumber = `PRM-${Date.now().toString().slice(-6)}`;
+      const randomSuffix = Math.random().toString(36).substring(2, 6).toUpperCase();
+      const orderNumber = `PRM-${Date.now().toString().slice(-6)}${randomSuffix}`;
 
       const newOrder = await tx.order.create({
         data: {

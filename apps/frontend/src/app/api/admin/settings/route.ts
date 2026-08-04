@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { verifyAdminAuth } from '@/lib/adminAuth';
+import { revalidatePath } from 'next/cache';
 
 const DEFAULT_SETTINGS: Record<string, string> = {
   storeName: "PROMILAA BY SOPNIL",
@@ -29,7 +30,13 @@ interface StoreSettingRow {
   updatedAt: Date;
 }
 
+// BUG 2 FIX: Admin auth check added to GET
 export async function GET(req: Request) {
+  const admin = await verifyAdminAuth(req);
+  if (!admin) {
+    return NextResponse.json({ error: 'Unauthorized access' }, { status: 401 });
+  }
+
   try {
     const rows = await (prisma as any).storeSetting.findMany();
     const settingsObj: Record<string, any> = { ...DEFAULT_SETTINGS };
@@ -77,6 +84,13 @@ export async function POST(req: Request) {
     });
 
     await prisma.$transaction(upsertPromises);
+
+    // BUG 1 FIX: Force revalidate public settings cache after admin save
+    try {
+      revalidatePath('/api/settings');
+    } catch (e) {
+      // revalidatePath may not work for API routes, but the dynamic flag handles it
+    }
 
     const rows = await (prisma as any).storeSetting.findMany();
     const updatedSettings: Record<string, any> = { ...DEFAULT_SETTINGS };

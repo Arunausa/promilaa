@@ -5,7 +5,30 @@ import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_ACCESS_SECRET || 'promilaa-secret-key-2026';
 
+// BUG 7 FIX: Basic in-memory rate limiter for signup (5 per 15 min per IP)
+const signupAttempts = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT = 5;
+const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
+
 export async function POST(req: Request) {
+  // Rate limiting check
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || req.headers.get('x-real-ip') || 'unknown';
+  const now = Date.now();
+  const entry = signupAttempts.get(ip);
+  
+  if (entry) {
+    if (now < entry.resetAt) {
+      if (entry.count >= RATE_LIMIT) {
+        return NextResponse.json({ message: 'Too many signup attempts. Please try again later.' }, { status: 429 });
+      }
+      entry.count++;
+    } else {
+      signupAttempts.set(ip, { count: 1, resetAt: now + WINDOW_MS });
+    }
+  } else {
+    signupAttempts.set(ip, { count: 1, resetAt: now + WINDOW_MS });
+  }
+
   try {
     const { name, email, password, phone } = await req.json();
 

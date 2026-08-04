@@ -2,6 +2,11 @@ import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_ACCESS_SECRET || 'promilaa-secret-key-2026';
 
+// BUG 6 FIX: Warn if fallback secret is used in production
+if (!process.env.JWT_ACCESS_SECRET && process.env.NODE_ENV === 'production') {
+  console.error('[SECURITY CRITICAL] JWT_ACCESS_SECRET env var is NOT set! Using fallback key — tokens can be forged!');
+}
+
 export interface AdminSession {
   userId: string;
   email: string;
