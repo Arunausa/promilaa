@@ -27,11 +27,22 @@ const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
+const allowedOrigins = [
+  process.env.FRONTEND_URL || 'https://promilaa.vercel.app',
+  'http://localhost:3000',
+  'http://localhost:3001',
+];
+
+// CORS Protection
 app.use(cors({
   origin: (origin, callback) => {
-    callback(null, true); // Allow all origins for e-commerce API
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS policy violation: Unauthorized origin'));
+    }
   },
-  credentials: true
+  credentials: true,
 }));
 app.use(express.json());
 app.use(cookieParser());

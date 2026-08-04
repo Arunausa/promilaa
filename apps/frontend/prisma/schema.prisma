@@ -290,6 +290,7 @@ model AbandonedCart {
   updatedAt   DateTime  @updatedAt
 
   @@index([phone])
+  @@index([isRecovered, updatedAt])
 }
 
 model StoreSetting {
