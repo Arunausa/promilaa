@@ -49,7 +49,6 @@ export default function NewProductPage() {
         body: JSON.stringify({
           ...formData,
           basePrice: Number(formData.basePrice),
-          // We will mock empty arrays for images/variants for the MVP
           images: [],
           variants: [{
             color: "Default",
