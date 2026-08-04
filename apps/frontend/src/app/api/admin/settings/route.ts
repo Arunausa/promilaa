@@ -22,12 +22,19 @@ const DEFAULT_SETTINGS: Record<string, string> = {
   smsApiToken: "",
 };
 
+interface StoreSettingRow {
+  id: string;
+  key: string;
+  value: string;
+  updatedAt: Date;
+}
+
 export async function GET(req: Request) {
   try {
-    const rows = await prisma.storeSetting.findMany();
+    const rows = await (prisma as any).storeSetting.findMany();
     const settingsObj: Record<string, any> = { ...DEFAULT_SETTINGS };
 
-    rows.forEach((row) => {
+    rows.forEach((row: StoreSettingRow) => {
       if (row.key === "announcementEnabled") {
         settingsObj[row.key] = row.value === "true";
       } else {
@@ -62,7 +69,7 @@ export async function POST(req: Request) {
     // Upsert each setting in PostgreSQL DB inside transaction
     const upsertPromises = Object.entries(body).map(([key, val]) => {
       const stringVal = typeof val === 'boolean' ? String(val) : String(val ?? '');
-      return prisma.storeSetting.upsert({
+      return (prisma as any).storeSetting.upsert({
         where: { key },
         update: { value: stringVal },
         create: { key, value: stringVal },
@@ -71,9 +78,9 @@ export async function POST(req: Request) {
 
     await prisma.$transaction(upsertPromises);
 
-    const rows = await prisma.storeSetting.findMany();
+    const rows = await (prisma as any).storeSetting.findMany();
     const updatedSettings: Record<string, any> = { ...DEFAULT_SETTINGS };
-    rows.forEach((row) => {
+    rows.forEach((row: StoreSettingRow) => {
       if (row.key === "announcementEnabled") {
         updatedSettings[row.key] = row.value === "true";
       } else {

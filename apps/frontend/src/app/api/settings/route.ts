@@ -3,9 +3,16 @@ import prisma from '@/lib/prisma';
 
 export const revalidate = 10; // Cache for 10 seconds across CDN/Vercel edge
 
+interface StoreSettingRow {
+  id: string;
+  key: string;
+  value: string;
+  updatedAt: Date;
+}
+
 export async function GET() {
   try {
-    const rows = await prisma.storeSetting.findMany({
+    const rows = await (prisma as any).storeSetting.findMany({
       where: {
         key: {
           in: ['announcementEnabled', 'announcementText', 'storeName', 'storePhone', 'shippingDhaka', 'shippingOutsideDhaka']
@@ -22,7 +29,7 @@ export async function GET() {
       shippingOutsideDhaka: "150",
     };
 
-    rows.forEach((row) => {
+    rows.forEach((row: StoreSettingRow) => {
       if (row.key === "announcementEnabled") {
         publicSettings[row.key] = row.value === "true";
       } else {
