@@ -8,21 +8,18 @@ import { AnimatedSection } from "@/components/ui/AnimatedSection";
 const videos = [
   {
     src: "/media/video/1.mp4",
-    poster: "/media/three_piece/1.jpeg",
     title: "Promilaa",
     tag: "Eid & Festive Collection '26",
     subtitle: "Elevating Bangladeshi Women's Fashion with Handcrafted Kurtis, 1-Piece, 2-Piece & 3-Piece Ethnic Masterpieces.",
   },
   {
     src: "/media/video/2.mp4",
-    poster: "/media/festive/1.jpeg",
     title: "Boutique Elegance",
     tag: "Exquisite Craftsmanship",
     subtitle: "Experience authentic Bangladeshi weaving, delicate embroidery, and royal silk fabrics.",
   },
   {
     src: "/media/video/3.mp4",
-    poster: "/media/kurti/3.jpeg",
     title: "South Asian Royal Wear",
     tag: "New Season Arrivals",
     subtitle: "Designed for the modern Bangladeshi woman who values heritage, comfort, and luxury.",
@@ -66,7 +63,7 @@ export default function HeroVideoSlider() {
 
   return (
     <section className="relative h-[92vh] min-h-[680px] w-full bg-slate-950 overflow-hidden flex items-center justify-center">
-      {/* Background Videos Layer - 100% Solid Opacity to Eliminate Double-Exposure / Ghost Overlay */}
+      {/* 100% Pure Video-Only Layer (No Static Poster Images attached) */}
       {videos.map((item, idx) => (
         <video
           key={item.src}
@@ -75,9 +72,9 @@ export default function HeroVideoSlider() {
           }}
           muted
           playsInline
-          preload={idx === 0 ? "auto" : "metadata"}
+          autoPlay={idx === 0}
+          preload="auto"
           onEnded={handleVideoEnded}
-          poster={item.poster}
           className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${
             idx === currentIndex ? "opacity-100 scale-105" : "opacity-0 scale-100 pointer-events-none"
           }`}
@@ -86,7 +83,7 @@ export default function HeroVideoSlider() {
         </video>
       ))}
 
-      {/* Dark Gradient Overlay for Crisp Text Contrast */}
+      {/* Dark Gradient Overlay for High Text Contrast */}
       <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/40 z-10 pointer-events-none" />
 
       {/* Content */}
