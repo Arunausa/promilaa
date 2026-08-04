@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
-import { AnimatedSection } from "@/components/ui/AnimatedSection";
 
 const videos = [
   {
@@ -28,19 +27,13 @@ const videos = [
 
 export default function HeroVideoSlider() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [mounted, setMounted] = useState(false);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const handleVideoEnded = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % videos.length);
   };
 
   useEffect(() => {
-    if (!mounted) return;
     videoRefs.current.forEach((vid, i) => {
       if (vid) {
         if (i === currentIndex) {
@@ -51,7 +44,7 @@ export default function HeroVideoSlider() {
         }
       }
     });
-  }, [currentIndex, mounted]);
+  }, [currentIndex]);
 
   const goToNext = () => {
     setCurrentIndex((prev) => (prev + 1) % videos.length);
@@ -63,7 +56,7 @@ export default function HeroVideoSlider() {
 
   return (
     <section className="relative h-[92vh] min-h-[680px] w-full bg-slate-950 overflow-hidden flex items-center justify-center">
-      {/* 100% Pure Video-Only Layer (No Static Poster Images attached) */}
+      {/* 100% Pure Video Background Stream Layer */}
       {videos.map((item, idx) => (
         <video
           key={item.src}
@@ -72,10 +65,10 @@ export default function HeroVideoSlider() {
           }}
           muted
           playsInline
-          autoPlay={idx === 0}
+          autoPlay
           preload="auto"
           onEnded={handleVideoEnded}
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out ${
             idx === currentIndex ? "opacity-100 scale-105" : "opacity-0 scale-100 pointer-events-none"
           }`}
         >
@@ -83,11 +76,11 @@ export default function HeroVideoSlider() {
         </video>
       ))}
 
-      {/* Dark Gradient Overlay for High Text Contrast */}
+      {/* Dark Gradient Overlay for Crisp Contrast */}
       <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/40 z-10 pointer-events-none" />
 
       {/* Content */}
-      <AnimatedSection key={currentIndex} className="relative z-20 text-center text-white px-4 max-w-4xl mx-auto mt-12">
+      <div key={currentIndex} className="relative z-20 text-center text-white px-4 max-w-4xl mx-auto mt-12 transition-all duration-500">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-amber-200 text-xs font-semibold uppercase tracking-widest mb-6 shadow-lg">
           <Sparkles className="w-3.5 h-3.5 text-amber-300" />
           {videos[currentIndex].tag}
@@ -110,12 +103,12 @@ export default function HeroVideoSlider() {
           </Link>
           <Link
             href="/collections/festive"
-            className="bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/40 text-white px-9 py-4 text-sm font-semibold tracking-widest uppercase transition-all rounded-sm w-full sm:w-auto"
+            className="bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/40 text-white px-9 py-4 text-sm font-semibold tracking-widest uppercase transition-all rounded-sm w-full sm:w-auto font-medium"
           >
             Festive Collection
           </Link>
         </div>
-      </AnimatedSection>
+      </div>
 
       {/* Navigation Arrows */}
       <button
