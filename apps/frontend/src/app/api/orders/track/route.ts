@@ -19,6 +19,12 @@ export async function GET(req: Request) {
     // Normalize phone number (strip whitespace and non-digits)
     const cleanPhone = phone.replace(/\D/g, '');
 
+    if (!cleanPhone || cleanPhone.length < 6) {
+      return NextResponse.json({ error: 'Valid phone number is required' }, { status: 400 });
+    }
+
+    // SECURITY FIX (IDOR): Strictly match BOTH orderNumber AND phone number.
+    // Removed unauthenticated fallback to prevent PII harvesting.
     const order = await prisma.order.findFirst({
       where: {
         orderNumber: { equals: orderNumber, mode: 'insensitive' },
@@ -27,7 +33,15 @@ export async function GET(req: Request) {
           { shippingAddress: { path: ['phone'], string_contains: cleanPhone } },
         ],
       },
-      include: {
+      select: {
+        id: true,
+        orderNumber: true,
+        status: true,
+        subtotal: true,
+        shippingFee: true,
+        total: true,
+        createdAt: true,
+        updatedAt: true,
         items: {
           include: {
             variant: {
@@ -35,33 +49,18 @@ export async function GET(req: Request) {
             }
           }
         },
-        payment: true,
+        payment: {
+          select: {
+            method: true,
+            status: true,
+            createdAt: true,
+          }
+        },
       }
     });
 
     if (!order) {
-      // Fallback query matching orderNumber only if phone format differs
-      const fallbackOrder = await prisma.order.findFirst({
-        where: {
-          orderNumber: { equals: orderNumber, mode: 'insensitive' }
-        },
-        include: {
-          items: {
-            include: {
-              variant: {
-                include: { product: true }
-              }
-            }
-          },
-          payment: true,
-        }
-      });
-
-      if (fallbackOrder) {
-        return NextResponse.json({ order: fallbackOrder });
-      }
-
-      return NextResponse.json({ error: 'Order not found. Please verify your details.' }, { status: 404 });
+      return NextResponse.json({ error: 'Order not found. Please verify your order number and phone number.' }, { status: 404 });
     }
 
     return NextResponse.json({ order });
