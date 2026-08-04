@@ -6,8 +6,7 @@ import Footer from "@/components/layout/Footer";
 import dynamic from "next/dynamic";
 
 const CartDrawer = dynamic(
-  () => import("@/components/cart/CartDrawer").then((mod) => mod.CartDrawer),
-  { ssr: false }
+  () => import("@/components/cart/CartDrawer").then((mod) => mod.CartDrawer)
 );
 
 const geistSans = Geist({
