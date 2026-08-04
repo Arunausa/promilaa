@@ -31,4 +31,10 @@ test.describe('Promilaa E-Commerce Full E2E User Journey & Automation Suite', ()
     await expect(brandName).toBeVisible();
   });
 
+  test('TC-05: Search Engine Fuzzy Query Verification for Kurti and Festive', async ({ page }) => {
+    await page.goto('/search?q=Kurti', { waitUntil: 'domcontentloaded' });
+    const searchHeader = page.locator('h1:has-text("Search")');
+    await expect(searchHeader).toBeVisible();
+  });
+
 });

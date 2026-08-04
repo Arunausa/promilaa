@@ -45,7 +45,7 @@ export default function WishlistPage() {
       {items.length === 0 ? (
         <div className="text-center py-16 bg-slate-50 rounded-lg">
           <p className="text-muted-foreground mb-4">Your wishlist is empty.</p>
-          <Link href="/collections/women">
+          <Link href="/collections/kurti">
             <Button>Continue Shopping</Button>
           </Link>
         </div>

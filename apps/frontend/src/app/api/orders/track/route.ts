@@ -1,7 +1,30 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 
+// RATE LIMITER: 20 tracking queries per 15 minutes per IP
+const trackingRateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const TRACKING_RATE_LIMIT = 20;
+const TRACKING_WINDOW_MS = 15 * 60 * 1000;
+
 export async function GET(req: Request) {
+  // Rate limiting check
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || req.headers.get('x-real-ip') || 'unknown';
+  const now = Date.now();
+  const entry = trackingRateLimitMap.get(ip);
+
+  if (entry) {
+    if (now < entry.resetAt) {
+      if (entry.count >= TRACKING_RATE_LIMIT) {
+        return NextResponse.json({ error: 'Too many tracking requests. Please try again in 15 minutes.' }, { status: 429 });
+      }
+      entry.count++;
+    } else {
+      trackingRateLimitMap.set(ip, { count: 1, resetAt: now + TRACKING_WINDOW_MS });
+    }
+  } else {
+    trackingRateLimitMap.set(ip, { count: 1, resetAt: now + TRACKING_WINDOW_MS });
+  }
+
   try {
     const { searchParams } = new URL(req.url);
     const rawOrderNumber = searchParams.get('orderNumber')?.trim() || '';
@@ -24,7 +47,6 @@ export async function GET(req: Request) {
     }
 
     // SECURITY FIX (IDOR): Strictly match BOTH orderNumber AND phone number.
-    // Removed unauthenticated fallback to prevent PII harvesting.
     const order = await prisma.order.findFirst({
       where: {
         orderNumber: { equals: orderNumber, mode: 'insensitive' },
