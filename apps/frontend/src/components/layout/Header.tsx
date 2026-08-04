@@ -26,7 +26,7 @@ export default function Header() {
     <React.Fragment>
       <AnnouncementBar />
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+        <div className="container mx-auto px-4 h-20 md:h-24 flex items-center justify-between">
           
           {/* Mobile Menu */}
           <div className="md:hidden flex items-center">
@@ -39,7 +39,7 @@ export default function Header() {
               <img 
                 src="/logo.png" 
                 alt="PROMILAA BY SOPNIL" 
-                className="h-9 sm:h-11 md:h-12 w-auto object-contain mix-blend-multiply transition-transform hover:scale-105"
+                className="h-14 sm:h-16 md:h-20 w-auto object-contain transition-transform hover:scale-105"
               />
             </Link>
           </div>
