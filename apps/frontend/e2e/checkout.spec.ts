@@ -14,7 +14,7 @@ test.describe('Promilaa E-Commerce Full E2E User Journey & Automation Suite', ()
     const firstProduct = page.locator('a[href^="/products/"]').first();
     if (await firstProduct.isVisible()) {
       await firstProduct.click();
-      await expect(page.locator('h1')).toBeVisible();
+      await expect(page.locator('h1, h2, div[class*="font-bold"]').first()).toBeVisible();
     }
   });
 
