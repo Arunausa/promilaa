@@ -58,7 +58,8 @@ export function CartDrawer() {
               </h2>
               <button 
                 onClick={closeDrawer}
-                className="p-2 hover:bg-slate-100 rounded-full transition-colors"
+                className="p-2 hover:bg-slate-100 rounded-full transition-colors flex items-center justify-center min-w-[40px] min-h-[40px]"
+                aria-label="Close cart drawer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -100,7 +101,8 @@ export function CartDrawer() {
                           </div>
                           <button 
                             onClick={() => removeItem(item.id)}
-                            className="text-slate-400 hover:text-destructive transition-colors"
+                            className="p-1 text-slate-400 hover:text-destructive transition-colors"
+                            aria-label={`Remove ${item.name} from cart`}
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -110,16 +112,18 @@ export function CartDrawer() {
                           <div className="flex items-center border rounded">
                             <button 
                               onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))}
-                              className="px-2 py-1 hover:bg-slate-50 transition-colors"
+                              className="px-2.5 py-1.5 min-w-[36px] min-h-[36px] flex items-center justify-center hover:bg-slate-50 transition-colors"
+                              aria-label={`Decrease quantity of ${item.name}`}
                             >
-                              <Minus className="w-3 h-3" />
+                              <Minus className="w-3.5 h-3.5" />
                             </button>
                             <span className="text-sm font-medium px-2">{item.quantity}</span>
                             <button 
                               onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                              className="px-2 py-1 hover:bg-slate-50 transition-colors"
+                              className="px-2.5 py-1.5 min-w-[36px] min-h-[36px] flex items-center justify-center hover:bg-slate-50 transition-colors"
+                              aria-label={`Increase quantity of ${item.name}`}
                             >
-                              <Plus className="w-3 h-3" />
+                              <Plus className="w-3.5 h-3.5" />
                             </button>
                           </div>
                           <span className="font-semibold text-sm">৳{item.price * item.quantity}</span>
