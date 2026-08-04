@@ -5,6 +5,7 @@ import HeroVideoSlider from "@/components/home/HeroVideoSlider";
 import ReelVideo from "@/components/home/ReelVideo";
 import { Star, ShieldCheck, Truck, RefreshCw, ArrowRight, Play, Sparkles } from "lucide-react";
 import { unstable_cache } from "next/cache";
+import prisma from "@/lib/prisma";
 
 const getFeaturedProducts = unstable_cache(
   async () => {
