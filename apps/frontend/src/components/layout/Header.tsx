@@ -95,15 +95,15 @@ export default function Header() {
         </div>
 
         {/* ========================================================================= */}
-        {/* DESKTOP HEADER (Show only on screens >= md) -> MANTO-STYLE MINIMAL         */}
-        {/* Left: Logo | Center: Nav Links | Right: Icons                               */}
+        {/* DESKTOP HEADER — Manto style: Logo LEFT | Nav CENTER | Icons RIGHT          */}
         {/* ========================================================================= */}
         <div className="hidden md:block">
           <div className="container mx-auto px-6">
-            <div className="flex items-center justify-between h-[72px]">
-              {/* Left: Logo — large & prominent */}
-              <div className="flex-shrink-0" style={{ minWidth: '200px' }}>
-                <Link href="/" prefetch={true} className="inline-flex items-center py-1 group">
+            <div className="relative flex items-center justify-between h-[72px]">
+
+              {/* Left: Logo */}
+              <div className="flex-shrink-0 z-10">
+                <Link href="/" prefetch={true} className="inline-flex items-center group">
                   <img 
                     src="/logo.png" 
                     alt="PROMILAA BY SOPNIL" 
@@ -112,8 +112,8 @@ export default function Header() {
                 </Link>
               </div>
 
-              {/* Center: Navigation — clean & spaced */}
-              <nav className="flex items-center justify-center gap-10">
+              {/* Center: Nav — absolutely centered */}
+              <nav className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-10 z-0">
                 {[
                   { href: '/collections/kurti', label: 'Kurti' },
                   { href: '/collections/one-piece', label: 'One Piece' },
@@ -131,8 +131,8 @@ export default function Header() {
                 ))}
               </nav>
 
-              {/* Right: Action Icons — minimal */}
-              <div className="flex items-center gap-1" style={{ minWidth: '200px', justifyContent: 'flex-end' }}>
+              {/* Right: Action Icons */}
+              <div className="flex items-center gap-1 z-10">
                 <Link
                   href="/search"
                   prefetch={true}
