@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
 
@@ -66,27 +65,8 @@ export default function HeroVideoSlider() {
   };
 
   return (
-    <section className="relative h-[92vh] min-h-[680px] w-full bg-slate-900 overflow-hidden flex items-center justify-center">
-      {/* Background Poster Image Layers (Fixes Mobile Refresh Black Screen) */}
-      {videos.map((item, idx) => (
-        <div
-          key={item.poster}
-          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-            idx === currentIndex ? "opacity-100 scale-105" : "opacity-0 scale-100 pointer-events-none"
-          }`}
-        >
-          <Image
-            src={item.poster}
-            alt={item.title}
-            fill
-            priority={idx === 0}
-            sizes="100vw"
-            className="object-cover"
-          />
-        </div>
-      ))}
-
-      {/* Video Overlay Layer */}
+    <section className="relative h-[92vh] min-h-[680px] w-full bg-slate-950 overflow-hidden flex items-center justify-center">
+      {/* Background Videos Layer - 100% Solid Opacity to Eliminate Double-Exposure / Ghost Overlay */}
       {videos.map((item, idx) => (
         <video
           key={item.src}
@@ -99,15 +79,15 @@ export default function HeroVideoSlider() {
           onEnded={handleVideoEnded}
           poster={item.poster}
           className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${
-            idx === currentIndex ? "opacity-80 scale-105" : "opacity-0 scale-100 pointer-events-none"
+            idx === currentIndex ? "opacity-100 scale-105" : "opacity-0 scale-100 pointer-events-none"
           }`}
         >
           <source src={item.src} type="video/mp4" />
         </video>
       ))}
 
-      {/* Dark Gradient Overlay for High Text Legibility */}
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-slate-950/30 z-10" />
+      {/* Dark Gradient Overlay for Crisp Text Contrast */}
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/40 z-10 pointer-events-none" />
 
       {/* Content */}
       <AnimatedSection key={currentIndex} className="relative z-20 text-center text-white px-4 max-w-4xl mx-auto mt-12">
