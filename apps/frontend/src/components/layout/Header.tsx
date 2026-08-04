@@ -35,8 +35,12 @@ export default function Header() {
 
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" prefetch={true} className="font-bold text-lg sm:text-xl md:text-2xl tracking-tighter flex items-center gap-1">
-              PROMILAA <span className="text-[10px] sm:text-xs font-semibold bg-slate-900 text-white px-1.5 sm:px-2 py-0.5 rounded tracking-normal">BY SOPNIL</span>
+            <Link href="/" prefetch={true} className="flex items-center py-1">
+              <img 
+                src="/logo.png" 
+                alt="PROMILAA BY SOPNIL" 
+                className="h-9 sm:h-11 md:h-12 w-auto object-contain mix-blend-multiply transition-transform hover:scale-105"
+              />
             </Link>
           </div>
 
