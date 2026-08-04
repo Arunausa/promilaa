@@ -14,7 +14,7 @@ const getFeaturedProducts = unstable_cache(
         where: { isPublished: true },
         take: 12,
         include: {
-          images: { orderBy: 'asc' ? { position: 'asc' } : { position: 'asc' } },
+          images: { orderBy: { position: 'asc' } },
           variants: true,
           category: { select: { name: true, slug: true } },
         },
