@@ -3,16 +3,23 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import { CartDrawer } from "@/components/cart/CartDrawer";
+import dynamic from "next/dynamic";
+
+const CartDrawer = dynamic(
+  () => import("@/components/cart/CartDrawer").then((mod) => mod.CartDrawer),
+  { ssr: false }
+);
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://promilaa.com';
