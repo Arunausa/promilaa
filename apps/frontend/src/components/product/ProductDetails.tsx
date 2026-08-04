@@ -49,6 +49,17 @@ export default function ProductDetails({ product }: { product: Product }) {
   const addItem = useCartStore((state) => state.addItem);
   const openDrawer = useCartStore((state) => state.openDrawer);
 
+  // Close Quick Order Modal on Escape key press (a11y)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setShowQuickOrderModal(false);
+    };
+    if (showQuickOrderModal) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [showQuickOrderModal]);
+
   const availableColors = Array.from(new Set(product.variants?.map((v) => v.color).filter(Boolean))) as string[];
   const availableSizes = Array.from(new Set(product.variants?.map((v) => v.size).filter(Boolean))) as string[];
 
