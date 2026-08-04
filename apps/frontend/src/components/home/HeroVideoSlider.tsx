@@ -65,8 +65,8 @@ export default function HeroVideoSlider() {
           }}
           muted
           playsInline
-          autoPlay
-          preload="auto"
+          autoPlay={idx === currentIndex}
+          preload={idx === currentIndex ? "auto" : "none"}
           onEnded={handleVideoEnded}
           className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out ${
             idx === currentIndex ? "opacity-100 scale-105" : "opacity-0 scale-100 pointer-events-none"

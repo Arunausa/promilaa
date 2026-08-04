@@ -1,12 +1,14 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  compress: true,
   serverExternalPackages: ["@prisma/client", "prisma"],
   experimental: {
     optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts'],
   },
   images: {
     formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 86400,
     remotePatterns: [
       { protocol: 'https', hostname: '**' }
     ]
@@ -16,6 +18,12 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [
+      {
+        source: '/media/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }
+        ]
+      },
       {
         source: '/:path*',
         headers: [

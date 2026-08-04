@@ -16,7 +16,7 @@ export default function ReelVideo({ src, label, tag }: ReelVideoProps) {
         muted
         loop
         playsInline
-        preload="metadata"
+        preload="none"
         onMouseEnter={(e) => e.currentTarget.play()}
         onMouseLeave={(e) => e.currentTarget.pause()}
         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
