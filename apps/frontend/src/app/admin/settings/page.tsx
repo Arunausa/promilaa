@@ -103,7 +103,11 @@ export default function AdminSettingsPage() {
     apiFetch<{ settings: SettingsType }>("/api/admin/settings")
       .then((res) => {
         if (res.settings) {
-          setSettings((prev) => ({ ...prev, ...res.settings }));
+          setSettings((prev) => ({
+            ...prev,
+            ...res.settings,
+            announcementEnabled: res.settings.announcementEnabled === true || String(res.settings.announcementEnabled) === "true",
+          }));
         }
       })
       .catch(() => {});
