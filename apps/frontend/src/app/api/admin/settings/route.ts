@@ -2,8 +2,7 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { verifyAdminAuth } from '@/lib/adminAuth';
 
-// In-memory / DB setting persistence store
-let memorySettingsStore: any = {
+const DEFAULT_SETTINGS: Record<string, string> = {
   storeName: "PROMILAA BY SOPNIL",
   storePhone: "01601708251",
   storeEmail: "support@promilaa.com",
@@ -12,7 +11,7 @@ let memorySettingsStore: any = {
   rocketNumber: "01601708251",
   shippingDhaka: "80",
   shippingOutsideDhaka: "150",
-  announcementEnabled: true,
+  announcementEnabled: "true",
   announcementText: "🌸 ক্যাশ অন ডেলিভারিতে শপিং করুন - সারা বাংলাদেশে হোম ডেলিভারি! 🌸",
   fraudbdApiKey: "",
   steadfastUser: "",
@@ -24,7 +23,31 @@ let memorySettingsStore: any = {
 };
 
 export async function GET(req: Request) {
-  return NextResponse.json({ settings: memorySettingsStore });
+  try {
+    const rows = await prisma.storeSetting.findMany();
+    const settingsObj: Record<string, any> = { ...DEFAULT_SETTINGS };
+
+    rows.forEach((row) => {
+      if (row.key === "announcementEnabled") {
+        settingsObj[row.key] = row.value === "true";
+      } else {
+        settingsObj[row.key] = row.value;
+      }
+    });
+
+    if (typeof settingsObj.announcementEnabled === "string") {
+      settingsObj.announcementEnabled = settingsObj.announcementEnabled === "true";
+    }
+
+    return NextResponse.json({ settings: settingsObj }, {
+      headers: {
+        'Cache-Control': 'no-store, max-age=0',
+      }
+    });
+  } catch (error: any) {
+    console.error('Failed to fetch admin settings:', error);
+    return NextResponse.json({ settings: DEFAULT_SETTINGS });
+  }
 }
 
 export async function POST(req: Request) {
@@ -35,14 +58,32 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    memorySettingsStore = {
-      ...memorySettingsStore,
-      ...body,
-    };
+    
+    // Upsert each setting in PostgreSQL DB inside transaction
+    const upsertPromises = Object.entries(body).map(([key, val]) => {
+      const stringVal = typeof val === 'boolean' ? String(val) : String(val ?? '');
+      return prisma.storeSetting.upsert({
+        where: { key },
+        update: { value: stringVal },
+        create: { key, value: stringVal },
+      });
+    });
 
-    return NextResponse.json({ success: true, settings: memorySettingsStore });
+    await prisma.$transaction(upsertPromises);
+
+    const rows = await prisma.storeSetting.findMany();
+    const updatedSettings: Record<string, any> = { ...DEFAULT_SETTINGS };
+    rows.forEach((row) => {
+      if (row.key === "announcementEnabled") {
+        updatedSettings[row.key] = row.value === "true";
+      } else {
+        updatedSettings[row.key] = row.value;
+      }
+    });
+
+    return NextResponse.json({ success: true, settings: updatedSettings });
   } catch (error: any) {
-    console.error('Failed to update settings:', error);
+    console.error('Failed to update admin settings:', error);
     return NextResponse.json({ error: 'Failed to update settings' }, { status: 500 });
   }
 }
