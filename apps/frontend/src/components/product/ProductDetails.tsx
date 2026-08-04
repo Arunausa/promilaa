@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCartStore } from "@/store/useCartStore";
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, Truck, ShieldCheck, CheckCircle2, Zap, AlertCircle } from "lucide-react";
