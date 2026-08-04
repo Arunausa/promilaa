@@ -23,18 +23,18 @@ const geistMono = Geist_Mono({
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://promilaa.com';
 
-// ADVANCED GEO (GENERATIVE ENGINE OPTIMIZATION) & LOCAL SEO METADATA
+// OPTIMIZED FOR PERFECT SEO (TITLE 30-60 CHARS, META DESC 120-160 CHARS) & HREFLANG
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "PROMILAA BY SOPNIL | Women's Ethnic Fashion | Salimullah Road, Mohammadpur, Dhaka",
-    template: "%s | PROMILAA BY SOPNIL Mohammadpur Dhaka",
+    default: "PROMILAA | Women's Ethnic Fashion & Kurtis Dhaka",
+    template: "%s | PROMILAA Ethnic Fashion Dhaka",
   },
-  description: "PROMILAA BY SOPNIL is Bangladesh's premier women's ethnic fashion brand located at Salimullah Road, Mohammadpur, Dhaka. Shop designer Kurtis, 1-Piece, 2-Piece, 3-Piece & Festive Collections (৳590 - ৳850).",
+  description: "Shop designer Kurtis, 1-Piece, 2-Piece, 3-Piece & Festive ethnic wear for women at Promilaa in Dhaka, Bangladesh. Fast Cash on Delivery nationwide.",
   keywords: [
-    "Promilaa", "Promilaa Mohammadpur", "Promilaa Salimullah Road", "Women Ethnic Wear Mohammadpur",
-    "Kurti Shop Mohammadpur Dhaka", "Three Piece Collection Mohammadpur", "One Piece Dress Dhaka",
-    "Best Boutique Salimullah Road Mohammadpur", "Women Fashion Dhanmondi Mohammadpur", "Eid Collection 2026 Dhaka"
+    "Promilaa", "Promilaa Mohammadpur", "Women Ethnic Wear Dhaka",
+    "Kurti Shop Dhaka", "Three Piece Collection Mohammadpur", "One Piece Dress Dhaka",
+    "Best Boutique Salimullah Road Mohammadpur", "Eid Collection 2026 Dhaka"
   ],
   authors: [{ name: "Promilaa Bangladesh", url: siteUrl }],
   creator: "Promilaa Fashion",
@@ -49,11 +49,12 @@ export const metadata: Metadata = {
     languages: {
       'bn-BD': siteUrl,
       'en-BD': siteUrl,
+      'x-default': siteUrl,
     },
   },
   openGraph: {
-    title: "Promilaa | Women's Ethnic Fashion | Salimullah Road, Mohammadpur, Dhaka",
-    description: "Located at Salimullah Road, Mohammadpur, Dhaka. Designer Kurtis, 1-Piece, 2-Piece, 3-Piece & Festive Collections crafted for modern women.",
+    title: "Promilaa | Women's Ethnic Fashion & Designer Wear Dhaka",
+    description: "Handcrafted Kurtis, 1-Piece, 2-Piece & 3-Piece Festive Collections for women. Located at Salimullah Road, Mohammadpur, Dhaka.",
     url: siteUrl,
     siteName: "Promilaa Ethnic Wear",
     locale: "bn_BD",
@@ -69,8 +70,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Promilaa | Women's Ethnic Fashion | Salimullah Road, Mohammadpur",
-    description: "Shop designer Kurtis, 1-Piece, 2-Piece, 3-Piece & Festive Collections at Salimullah Road, Mohammadpur, Dhaka.",
+    title: "Promilaa | Women's Ethnic Fashion & Designer Wear Dhaka",
+    description: "Shop designer Kurtis, 1-Piece, 2-Piece & 3-Piece Collections at Salimullah Road, Mohammadpur, Dhaka.",
     images: [`${siteUrl}/media/three_piece/1.jpeg`],
     creator: "@promilaabd",
   },
@@ -85,7 +86,6 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-  // GEO LOCATION METADATA (SALIMULLAH ROAD, MOHAMMADPUR, DHAKA)
   other: {
     "geo.region": "BD-13",
     "geo.placename": "Salimullah Road, Mohammadpur, Dhaka-1207, Bangladesh",
@@ -101,7 +101,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // GENERATIVE ENGINE OPTIMIZATION (GEO) KNOWLEDGE GRAPH SCHEMA
   const globalSchemas = [
     {
       "@context": "https://schema.org",
@@ -157,7 +156,6 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
-        {/* Inject Google & AI Engine Knowledge Graph Schemas */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(globalSchemas) }}
