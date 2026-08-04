@@ -95,80 +95,88 @@ export default function Header() {
         </div>
 
         {/* ========================================================================= */}
-        {/* DESKTOP HEADER (Show only on screens >= md) -> ORIGINAL CLEAN PRO DESIGN   */}
-        {/* Left: Logo + Categories | Right: Search + Account + Cart                   */}
+        {/* DESKTOP HEADER (Show only on screens >= md) -> MANTO-STYLE MINIMAL         */}
+        {/* Left: Logo | Center: Nav Links | Right: Icons                               */}
         {/* ========================================================================= */}
-        <div className="hidden md:flex container mx-auto px-6 h-20 items-center justify-between">
-          {/* Left: Logo + Nav */}
-          <div className="flex items-center space-x-10">
-            <Link href="/" prefetch={true} className="flex items-center py-1">
-              <img 
-                src="/logo.png" 
-                alt="PROMILAA BY SOPNIL" 
-                className="h-14 w-auto object-contain transition-transform hover:scale-105"
-              />
-            </Link>
+        <div className="hidden md:block">
+          <div className="container mx-auto px-6">
+            <div className="flex items-center justify-between h-[72px]">
+              {/* Left: Logo — large & prominent */}
+              <div className="flex-shrink-0" style={{ minWidth: '200px' }}>
+                <Link href="/" prefetch={true} className="inline-flex items-center py-1 group">
+                  <img 
+                    src="/logo.png" 
+                    alt="PROMILAA BY SOPNIL" 
+                    className="h-14 w-auto object-contain transition-all duration-300 group-hover:opacity-80"
+                  />
+                </Link>
+              </div>
 
-            <nav className="flex items-center space-x-8 text-sm font-semibold uppercase tracking-wider text-slate-700">
-              <Link href="/collections/kurti" prefetch={true} className="transition-colors hover:text-slate-950">
-                Kurti
-              </Link>
-              <Link href="/collections/one-piece" prefetch={true} className="transition-colors hover:text-slate-950">
-                One Piece
-              </Link>
-              <Link href="/collections/two-piece" prefetch={true} className="transition-colors hover:text-slate-950">
-                Two Piece
-              </Link>
-              <Link href="/collections/three-piece" prefetch={true} className="transition-colors hover:text-slate-950">
-                Three Piece
-              </Link>
-            </nav>
-          </div>
+              {/* Center: Navigation — clean & spaced */}
+              <nav className="flex items-center justify-center gap-10">
+                {[
+                  { href: '/collections/kurti', label: 'Kurti' },
+                  { href: '/collections/one-piece', label: 'One Piece' },
+                  { href: '/collections/two-piece', label: 'Two Piece' },
+                  { href: '/collections/three-piece', label: 'Three Piece' },
+                ].map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    prefetch={true}
+                    className="relative text-[13px] font-medium tracking-[0.08em] uppercase text-slate-600 hover:text-slate-950 transition-colors duration-200 py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1.5px] after:bg-slate-900 after:transition-all after:duration-300 hover:after:w-full"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </nav>
 
-          {/* Right: Actions */}
-          <div className="flex items-center space-x-4">
-            <Link
-              href="/search"
-              prefetch={true}
-              className={buttonVariants({ variant: "ghost", size: "icon" })}
-            >
-              <Search className="h-5 w-5" />
-              <span className="sr-only">Search</span>
-            </Link>
-
-            <Link 
-              href={user ? (user.role === 'ADMIN' || user.role === 'STAFF' ? "/admin" : "/account") : "/login"}
-              prefetch={true}
-              className={buttonVariants({ variant: "ghost", size: "icon" })}
-            >
-              <User className="h-5 w-5" />
-              <span className="sr-only">Account</span>
-            </Link>
-
-            <Link
-              href="/account/wishlist"
-              prefetch={true}
-              className={buttonVariants({ variant: "ghost", size: "icon" })}
-            >
-              <Heart className="h-5 w-5" />
-              <span className="sr-only">Wishlist</span>
-            </Link>
-
-            <button 
-              onClick={() => useCartStore.getState().openDrawer()}
-              className={buttonVariants({ variant: "ghost", size: "icon" }) + " relative cursor-pointer"}
-            >
-              <ShoppingBag className="h-5 w-5" />
-              {mounted && totalItems > 0 && (
-                <Badge 
-                  variant="destructive" 
-                  className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs bg-slate-900 text-white rounded-full"
+              {/* Right: Action Icons — minimal */}
+              <div className="flex items-center gap-1" style={{ minWidth: '200px', justifyContent: 'flex-end' }}>
+                <Link
+                  href="/search"
+                  prefetch={true}
+                  className="inline-flex items-center justify-center h-10 w-10 rounded-full text-slate-500 hover:text-slate-900 hover:bg-slate-100/70 transition-all duration-200"
+                  aria-label="Search"
                 >
-                  {totalItems}
-                </Badge>
-              )}
-              <span className="sr-only">Cart</span>
-            </button>
+                  <Search className="h-[18px] w-[18px] stroke-[1.5]" />
+                </Link>
+
+                <Link 
+                  href={user ? (user.role === 'ADMIN' || user.role === 'STAFF' ? "/admin" : "/account") : "/login"}
+                  prefetch={true}
+                  className="inline-flex items-center justify-center h-10 w-10 rounded-full text-slate-500 hover:text-slate-900 hover:bg-slate-100/70 transition-all duration-200"
+                  aria-label="Account"
+                >
+                  <User className="h-[18px] w-[18px] stroke-[1.5]" />
+                </Link>
+
+                <Link
+                  href="/account/wishlist"
+                  prefetch={true}
+                  className="inline-flex items-center justify-center h-10 w-10 rounded-full text-slate-500 hover:text-slate-900 hover:bg-slate-100/70 transition-all duration-200"
+                  aria-label="Wishlist"
+                >
+                  <Heart className="h-[18px] w-[18px] stroke-[1.5]" />
+                </Link>
+
+                <button 
+                  onClick={() => useCartStore.getState().openDrawer()}
+                  className="inline-flex items-center justify-center h-10 w-10 rounded-full text-slate-500 hover:text-slate-900 hover:bg-slate-100/70 transition-all duration-200 relative cursor-pointer"
+                  aria-label="Cart"
+                >
+                  <ShoppingBag className="h-[18px] w-[18px] stroke-[1.5]" />
+                  {mounted && totalItems > 0 && (
+                    <Badge 
+                      variant="destructive" 
+                      className="absolute -top-0.5 -right-0.5 h-4 w-4 flex items-center justify-center p-0 text-[9px] font-bold bg-slate-900 text-white rounded-full border border-white"
+                    >
+                      {totalItems}
+                    </Badge>
+                  )}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
