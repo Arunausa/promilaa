@@ -50,7 +50,7 @@ export default function Header() {
               <img 
                 src="/logo.png" 
                 alt="PROMILAA BY SOPNIL" 
-                className="h-10 sm:h-14 md:h-16 w-auto object-contain transition-transform hover:scale-105"
+                className="h-14 sm:h-16 md:h-20 max-h-16 sm:max-h-20 w-auto object-contain transition-transform hover:scale-105"
               />
             </Link>
           </div>
