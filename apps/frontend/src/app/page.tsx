@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import ProductCard from "@/components/product/ProductCard";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
 import HeroVideoSlider from "@/components/home/HeroVideoSlider";
@@ -66,10 +67,11 @@ export default async function Home() {
           ].map((cat, idx) => (
             <AnimatedSection key={cat.slug} delay={idx * 0.1}>
               <Link href={`/collections/${cat.slug}`} className="group relative aspect-[3/4] block rounded-xl overflow-hidden shadow-md">
-                <img
+                <Image
                   src={cat.img}
                   alt={cat.title}
-                  loading="lazy"
+                  fill
+                  sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 300px"
                   className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 text-white transition-opacity duration-300">

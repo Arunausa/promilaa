@@ -33,17 +33,47 @@ export default function HeroVideoSlider() {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
   };
 
+  // HARDENED MOBILE AUTOPLAY ENGINE (iOS Safari & Android Chrome Compatibility)
   useEffect(() => {
-    videoRefs.current.forEach((vid, i) => {
-      if (vid) {
-        if (i === currentIndex) {
-          vid.currentTime = 0;
-          vid.play().catch(() => {});
-        } else {
-          vid.pause();
+    const playCurrentVideo = () => {
+      videoRefs.current.forEach((vid, i) => {
+        if (vid) {
+          vid.muted = true;
+          vid.defaultMuted = true;
+          vid.setAttribute("playsinline", "true");
+          vid.setAttribute("webkit-playsinline", "true");
+
+          if (i === currentIndex) {
+            const playPromise = vid.play();
+            if (playPromise !== undefined) {
+              playPromise.catch((err) => {
+                console.log("Mobile autoplay attempt retry:", err);
+              });
+            }
+          } else {
+            vid.pause();
+          }
         }
+      });
+    };
+
+    playCurrentVideo();
+
+    // Unlock mobile audio/video context on first user touch if low power mode blocked initial play
+    const handleTouch = () => {
+      const activeVid = videoRefs.current[currentIndex];
+      if (activeVid && activeVid.paused) {
+        activeVid.play().catch(() => {});
       }
-    });
+    };
+
+    window.addEventListener("touchstart", handleTouch, { passive: true, once: true });
+    window.addEventListener("click", handleTouch, { passive: true, once: true });
+
+    return () => {
+      window.removeEventListener("touchstart", handleTouch);
+      window.removeEventListener("click", handleTouch);
+    };
   }, [currentIndex]);
 
   const goToNext = () => {
@@ -56,7 +86,7 @@ export default function HeroVideoSlider() {
 
   return (
     <section className="relative h-[92vh] min-h-[680px] w-full bg-slate-950 overflow-hidden flex items-center justify-center">
-      {/* 100% Pure Video Background Layer (Zero Static Images) */}
+      {/* 100% Pure Video Background Layer (Mobile Safari & Android AutoPlay Optimized) */}
       {slides.map((item, idx) => (
         <video
           key={item.src}
@@ -65,8 +95,8 @@ export default function HeroVideoSlider() {
           }}
           muted
           playsInline
-          autoPlay={idx === currentIndex}
-          preload={idx === currentIndex ? "auto" : "none"}
+          autoPlay
+          preload="auto"
           onEnded={handleVideoEnded}
           className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out ${
             idx === currentIndex ? "opacity-100 scale-105" : "opacity-0 scale-100 pointer-events-none"

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 interface ProductCardProps {
   product: {
@@ -33,24 +34,24 @@ export default function ProductCard({ product }: ProductCardProps) {
     <Link href={`/products/${product.slug}`} className="group flex flex-col gap-3">
       {/* Image Container */}
       <div className="relative aspect-[3/4] w-full overflow-hidden rounded-md bg-slate-100 shadow-sm border border-slate-100">
-        <img
+        <Image
           src={primaryImage}
           alt={product.images?.[0]?.altText || product.name}
-          loading="lazy"
-          decoding="async"
+          fill
+          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 300px"
           className="object-cover w-full h-full transition-transform duration-700 ease-out group-hover:scale-105"
         />
         
         {/* Discount Tag */}
         {isSale && (
-          <div className="absolute top-2 left-2 bg-rose-600 text-white text-[10px] font-bold tracking-wider px-2 py-0.5 rounded shadow">
+          <div className="absolute top-2 left-2 bg-rose-600 text-white text-[10px] font-bold tracking-wider px-2 py-0.5 rounded shadow z-10">
             {discountPercent > 0 ? `${discountPercent}% OFF` : 'SALE'}
           </div>
         )}
 
         {/* Stock Status Badge */}
         {totalStock !== null && totalStock === 0 && (
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px] flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px] flex items-center justify-center z-10">
             <span className="bg-red-600 text-white font-bold text-xs uppercase px-3 py-1.5 rounded shadow">
               Stock Out
             </span>
