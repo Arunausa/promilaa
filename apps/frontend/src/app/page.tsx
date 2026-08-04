@@ -4,26 +4,30 @@ import { AnimatedSection } from "@/components/ui/AnimatedSection";
 import HeroVideoSlider from "@/components/home/HeroVideoSlider";
 import ReelVideo from "@/components/home/ReelVideo";
 import { Star, ShieldCheck, Truck, RefreshCw, ArrowRight, Play, Sparkles } from "lucide-react";
-import prisma from "@/lib/prisma";
+import { unstable_cache } from "next/cache";
 
-async function getFeaturedProducts() {
-  try {
-    const products = await prisma.product.findMany({
-      where: { isPublished: true },
-      take: 12,
-      include: {
-        images: { orderBy: { position: 'asc' } },
-        variants: true,
-        category: { select: { name: true, slug: true } },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
-    return products;
-  } catch (error) {
-    console.error("Failed to fetch featured products from Prisma:", error);
-    return [];
-  }
-}
+const getFeaturedProducts = unstable_cache(
+  async () => {
+    try {
+      const products = await prisma.product.findMany({
+        where: { isPublished: true },
+        take: 12,
+        include: {
+          images: { orderBy: 'asc' ? { position: 'asc' } : { position: 'asc' } },
+          variants: true,
+          category: { select: { name: true, slug: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+      return products;
+    } catch (error) {
+      console.error("Failed to fetch featured products from Prisma:", error);
+      return [];
+    }
+  },
+  ["home-featured-products"],
+  { revalidate: 60, tags: ["products"] }
+);
 
 export default async function Home() {
   const allProducts = await getFeaturedProducts();

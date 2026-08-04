@@ -31,7 +31,18 @@ export async function POST(req: Request) {
 
         const itemQty = Number(item.quantity) || 1;
 
-        if (variant.stock < itemQty) {
+        // ATOMIC CONCURRENCY FIX: Decrement stock only if stock >= itemQty at DB level
+        const updatedVariant = await tx.productVariant.updateMany({
+          where: {
+            id: variant.id,
+            stock: { gte: itemQty },
+          },
+          data: {
+            stock: { decrement: itemQty },
+          },
+        });
+
+        if (updatedVariant.count === 0) {
           throw new Error(`Insufficient stock for ${variant.product.name} (${variant.size}/${variant.color}). Available: ${variant.stock}`);
         }
 
@@ -42,16 +53,6 @@ export async function POST(req: Request) {
           variantId: variant.id,
           quantity: itemQty,
           unitPrice: itemPrice,
-        });
-
-        // Decrement stock atomically
-        await tx.productVariant.update({
-          where: { id: variant.id },
-          data: {
-            stock: {
-              decrement: itemQty,
-            },
-          },
         });
 
         // Create Inventory Audit Log
@@ -104,8 +105,10 @@ export async function POST(req: Request) {
       return newOrder;
     });
 
-    // Run Multi-Courier Fraud Checker Engine
-    const fraudResult = await checkPhoneNumberFraud(phone, result.id);
+    // Run Multi-Courier Fraud Checker Engine (Non-blocking async call for performance)
+    checkPhoneNumberFraud(phone, result.id).catch((err) => {
+      console.error('[Fraud Engine Async Error]', err);
+    });
 
     return NextResponse.json({
       success: true,
@@ -114,7 +117,6 @@ export async function POST(req: Request) {
         orderNumber: result.orderNumber,
         total: result.total,
         paymentMethod: paymentMethod || 'COD',
-        riskLevel: fraudResult.status,
       },
     }, { status: 201 });
 
