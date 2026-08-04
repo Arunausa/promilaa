@@ -8,8 +8,6 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { buttonVariants } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import MobileNav from '@/components/layout/MobileNav';
-import AnnouncementBar from '@/components/layout/AnnouncementBar';
-
 export default function Header() {
   const [mounted, setMounted] = useState(() => typeof window !== 'undefined');
   const cartStore = useCartStore();
@@ -24,7 +22,6 @@ export default function Header() {
 
   return (
     <React.Fragment>
-      <AnnouncementBar />
       <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
         
         {/* ========================================================================= */}

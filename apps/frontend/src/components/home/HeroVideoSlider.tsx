@@ -2,27 +2,23 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
 
 const slides = [
   {
     src: "/media/video/1.mp4",
-    image: "/media/three_piece/1.jpeg",
     title: "Promilaa",
     tag: "Eid & Festive Collection '26",
     subtitle: "Elevating Bangladeshi Women's Fashion with Handcrafted Kurtis, 1-Piece, 2-Piece & 3-Piece Ethnic Masterpieces.",
   },
   {
     src: "/media/video/2.mp4",
-    image: "/media/festive/1.jpeg",
     title: "Boutique Elegance",
     tag: "Exquisite Craftsmanship",
     subtitle: "Experience authentic Bangladeshi weaving, delicate embroidery, and royal silk fabrics.",
   },
   {
     src: "/media/video/3.mp4",
-    image: "/media/kurti/3.jpeg",
     title: "South Asian Royal Wear",
     tag: "New Season Arrivals",
     subtitle: "Designed for the modern Bangladeshi woman who values heritage, comfort, and luxury.",
@@ -31,7 +27,6 @@ const slides = [
 
 export default function HeroVideoSlider() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [videoLoaded, setVideoLoaded] = useState<Record<number, boolean>>({});
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
   const handleVideoEnded = () => {
@@ -61,26 +56,7 @@ export default function HeroVideoSlider() {
 
   return (
     <section className="relative h-[92vh] min-h-[680px] w-full bg-slate-950 overflow-hidden flex items-center justify-center">
-      {/* Permanent Image Background Layer (Fixes Hard Refresh Black Screen Instantly) */}
-      {slides.map((item, idx) => (
-        <div
-          key={item.image}
-          className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
-            idx === currentIndex ? "opacity-100 scale-105" : "opacity-0 scale-100 pointer-events-none"
-          }`}
-        >
-          <Image
-            src={item.image}
-            alt={item.title}
-            fill
-            priority={idx === 0}
-            sizes="100vw"
-            className="object-cover"
-          />
-        </div>
-      ))}
-
-      {/* Video Layer (Fades in smoothly over background image when video is ready) */}
+      {/* 100% Pure Video Background Layer (Zero Static Images) */}
       {slides.map((item, idx) => (
         <video
           key={item.src}
@@ -89,12 +65,11 @@ export default function HeroVideoSlider() {
           }}
           muted
           playsInline
-          autoPlay={idx === 0}
+          autoPlay
           preload="auto"
           onEnded={handleVideoEnded}
-          onCanPlay={() => setVideoLoaded((prev) => ({ ...prev, [idx]: true }))}
           className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out ${
-            idx === currentIndex && videoLoaded[idx] ? "opacity-100 scale-105" : "opacity-0 scale-100 pointer-events-none"
+            idx === currentIndex ? "opacity-100 scale-105" : "opacity-0 scale-100 pointer-events-none"
           }`}
         >
           <source src={item.src} type="video/mp4" />
