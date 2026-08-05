@@ -103,6 +103,7 @@ export default function HeroVideoSlider() {
           }`}
         >
           <source src={item.src} type="video/mp4" />
+          <track kind="captions" srcLang="en" label="Captions off" />
         </video>
       ))}
 
@@ -127,13 +128,13 @@ export default function HeroVideoSlider() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             href="/collections/kurti"
-            className="bg-amber-600 hover:bg-amber-700 text-white px-9 py-4 text-sm font-semibold tracking-widest uppercase transition-all shadow-lg hover:shadow-amber-600/30 rounded-sm w-full sm:w-auto"
+            className="bg-amber-600 hover:bg-amber-700 text-white px-9 py-4 text-sm font-semibold tracking-widest uppercase transition-all shadow-lg hover:shadow-amber-600/30 rounded-sm w-full sm:w-auto min-h-[48px] flex items-center justify-center"
           >
             Explore Collection
           </Link>
           <Link
             href="/collections/festive"
-            className="bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/40 text-white px-9 py-4 text-sm font-semibold tracking-widest uppercase transition-all rounded-sm w-full sm:w-auto font-medium"
+            className="bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/40 text-white px-9 py-4 text-sm font-semibold tracking-widest uppercase transition-all rounded-sm w-full sm:w-auto font-medium min-h-[48px] flex items-center justify-center"
           >
             Festive Collection
           </Link>
@@ -144,14 +145,14 @@ export default function HeroVideoSlider() {
       <button
         onClick={goToPrev}
         aria-label="Previous Video"
-        className="absolute left-4 md:left-8 z-30 p-3 rounded-full bg-black/30 hover:bg-black/60 text-white border border-white/20 backdrop-blur-md transition-all"
+        className="absolute left-4 md:left-8 z-30 p-3 min-w-[48px] min-h-[48px] flex items-center justify-center rounded-full bg-black/40 hover:bg-black/70 text-white border border-white/30 backdrop-blur-md transition-all"
       >
         <ChevronLeft className="w-6 h-6" />
       </button>
       <button
         onClick={goToNext}
         aria-label="Next Video"
-        className="absolute right-4 md:right-8 z-30 p-3 rounded-full bg-black/30 hover:bg-black/60 text-white border border-white/20 backdrop-blur-md transition-all"
+        className="absolute right-4 md:right-8 z-30 p-3 min-w-[48px] min-h-[48px] flex items-center justify-center rounded-full bg-black/40 hover:bg-black/70 text-white border border-white/30 backdrop-blur-md transition-all"
       >
         <ChevronRight className="w-6 h-6" />
       </button>
@@ -162,11 +163,15 @@ export default function HeroVideoSlider() {
           <button
             key={i}
             onClick={() => setCurrentIndex(i)}
-            className={`h-2.5 rounded-full transition-all duration-500 ${
-              i === currentIndex ? "w-10 bg-amber-500" : "w-2.5 bg-white/40 hover:bg-white/70"
-            }`}
+            className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center"
             aria-label={`Go to slide ${i + 1}`}
-          />
+          >
+            <span
+              className={`h-2.5 rounded-full transition-all duration-500 ${
+                i === currentIndex ? "w-10 bg-amber-500" : "w-2.5 bg-white/50 hover:bg-white/80"
+              }`}
+            />
+          </button>
         ))}
       </div>
     </section>

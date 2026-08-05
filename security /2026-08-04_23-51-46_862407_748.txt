@@ -1,0 +1,204 @@
+# Terminal Full Output
+# Terminal: main
+# Command: cd /home/ubuntu && python3 test_promilaa.py 2>&1
+# PID: 748
+# Timestamp: 2026-08-04_23-51-46.862407
+# Original Length: 6913 characters
+# ----------------------------------------
+
+[32mubuntu@sandbox:~$ [0mcd /home/ubuntu && python3 test_promilaa.py 2>&1
+============================================================
+PROMILAA WEBSITE COMPREHENSIVE TEST REPORT
+============================================================
+### 1. PAGE LOAD & STATUS CHECK
+----------------------------------------
+  [200] /
+  [200] /collections/kurti
+  [200] /collections/one-piece
+  [200] /collections/two-piece
+  [200] /collections/three-piece
+  [200] /collections/festive
+  [200] /search
+  [200] /login
+  [200] /account/wishlist
+  [200] /products/royal-wedding-wear-suit-vol-4-129
+  [200] /products/maroon-majesty-festive-set-vol-3-128
+  [200] /products/dazzling-zari-silk-outfit-vol-2-127
+  [200] /products/grand-velvet-celebration-suit-vol-1-126
+  [200] /products/printed-lawn-3-piece-vol-8-125
+  [200] /products/royal-dupatta-ensemble-vol-7-124
+  [200] /products/jacquard-cotton-salwar-set-vol-6-123
+  [200] /products/festive-zari-3-piece-vol-5-122
+  [200] /about
+  [200] /contact
+  [200] /shipping
+  [200] /returns
+  [200] /faq
+  [200] /orders/track
+  [200] /terms
+  [200] /privacy
+### 2. INTERNAL LINK ANALYSIS
+----------------------------------------
+  Found 25 unique internal links on homepage
+    /
+    /about
+    /account/wishlist
+    /collections/festive
+    /collections/kurti
+    /collections/one-piece
+    /collections/three-piece
+    /collections/two-piece
+    /contact
+    /faq
+    /login
+    /orders/track
+    /privacy
+    /products/dazzling-zari-silk-outfit-vol-2-127
+    /products/festive-zari-3-piece-vol-5-122
+    /products/grand-velvet-celebration-suit-vol-1-126
+    /products/jacquard-cotton-salwar-set-vol-6-123
+    /products/maroon-majesty-festive-set-vol-3-128
+    /products/printed-lawn-3-piece-vol-8-125
+    /products/royal-dupatta-ensemble-vol-7-124
+    /products/royal-wedding-wear-suit-vol-4-129
+    /returns
+    /search
+    /shipping
+    /terms
+### 3. IMAGE ASSET CHECK
+----------------------------------------
+  Found 30 unique image references
+    [OK] /logo.png
+    [OK] /media/festive/1.jpeg
+    [OK] /media/festive/3.jpeg
+    [OK] /media/festive/5.jpeg
+    [OK] /media/festive/7.jpeg
+    [OK] /media/kurti/1.jpeg
+    [OK] /media/kurti/2.jpeg
+    [OK] /media/kurti/4.jpeg
+    [OK] /media/kurti/6.jpeg
+    [OK] /media/kurti/8.jpeg
+    [OK] /media/one_piece/1.jpeg
+    [OK] /media/one_piece/3.jpeg
+    [OK] /media/one_piece/5.jpeg
+    [OK] /media/one_piece/7.jpeg
+    [OK] /media/one_piece/Woman_wearing_floral_dress_202608030601_2.jpeg
+    [OK] /media/one_piece/Woman_wearing_floral_dress_202608030601_4.jpeg
+    [OK] /media/three_piece/1.jpeg
+    [OK] /media/three_piece/11.jpeg
+    [OK] /media/three_piece/13.jpeg
+    [OK] /media/three_piece/15.jpeg
+    [OK] /media/three_piece/2.jpeg
+    [OK] /media/three_piece/4.jpeg
+    [OK] /media/three_piece/6.jpeg
+    [OK] /media/three_piece/8.jpeg
+    [OK] /media/two_piece/1.jpeg
+    [OK] /media/two_piece/3.jpeg
+    [OK] /media/two_piece/5.jpeg
+    [OK] /media/two_piece/7.jpeg
+    [OK] /media/two_piece/Womens_two_piece_outfit_202608030602.jpeg
+    [OK] /media/two_piece/Womens_two_piece_outfit_202608030602_3.jpeg
+### 4. SEO META TAG CHECK
+----------------------------------------
+  Page: /
+    Title tag: ✓
+    Meta description: ✓
+    OG title: ✓
+    OG image: ✓
+    Canonical URL: ✓
+  Page: /collections/kurti
+    Title tag: ✓
+    Meta description: ✓
+    OG title: ✓
+    OG image: ✗ MISSING
+    Canonical URL: ✓
+  Page: /products/royal-wedding-wear-suit-vol-4-129
+    Title tag: ✓
+    Meta description: ✓
+    OG title: ✓
+    OG image: ✓
+    Canonical URL: ✓
+### 5. CONTENT DUPLICATION CHECK
+----------------------------------------
+  Found 4 products appearing multiple times on homepage:
+    /products/royal-wedding-wear-suit-vol-4-129 - appears 2 times
+    /products/maroon-majesty-festive-set-vol-3-128 - appears 2 times
+    /products/dazzling-zari-silk-outfit-vol-2-127 - appears 2 times
+    /products/grand-velvet-celebration-suit-vol-1-126 - appears 2 times
+### 6. SOCIAL MEDIA LINKS CHECK
+----------------------------------------
+    ⚠ PLACEHOLDER LINK (not real profile): https://facebook.com
+    ⚠ PLACEHOLDER LINK (not real profile): https://instagram.com
+    ⚠ PLACEHOLDER LINK (not real profile): https://youtube.com
+### 7. PAYMENT METHOD IMAGES CHECK
+----------------------------------------
+  bKash mentioned in text: ✓
+  Nagad mentioned in text: ✓
+  Rocket mentioned in text: ✓
+  ⚠ No payment method logo images found (text-only)
+### 8. FORM CHECK
+----------------------------------------
+  Forms found: 1
+    Input type=email, name='', placeholder='আপনার ইমেইল এড্রেস লিখুন'
+### 9. JAVASCRIPT CHECK
+----------------------------------------
+  External script files: 13
+    /_next/static/chunks/164qorrwl0hdd.js
+    /_next/static/chunks/25o46h8mdjlrg.js
+    /_next/static/chunks/1s3bq29329pvv.js
+    /_next/static/chunks/0paxexg6-m0de.js
+    /_next/static/chunks/turbopack-19onfcr531hyn.js
+    /_next/static/chunks/3n49r104e2i-_.js
+    /_next/static/chunks/3i04ozox_rm-y.js
+    /_next/static/chunks/40xzobnpbh362.js
+    /_next/static/chunks/2dj34c086aff3.js
+    /_next/static/chunks/14mrh2-p_w84d.js
+    /_next/static/chunks/1vi6nopovwb0y.js
+    /_next/static/chunks/0cz1d0mv5g_q7.js
+    /_next/static/chunks/310vm2bl3xxpt.js
+  Inline script blocks: 17
+### 10. SECURITY HEADERS CHECK
+----------------------------------------
+  ✓ HSTS: max-age=63072000; includeSubDomains; preload
+  ✓ X-Content-Type-Options: nosniff
+  ✓ X-Frame-Options: DENY
+  ✗ X-XSS-Protection: MISSING
+  ✗ CSP: MISSING
+  ✓ Referrer-Policy: strict-origin-when-cross-origin
+  ✓ Permissions-Policy: camera=(), microphone=(), geolocation=()
+### 11. SSL CHECK
+----------------------------------------
+  HTTPS working: ✓
+  SSL certificate valid: ✓
+### 12. PAGE LOAD PERFORMANCE
+----------------------------------------
+  /: 70.0ms, 97.2KB
+  /collections/kurti: 143.0ms, 53.0KB
+  /products/royal-wedding-wear-suit-vol-4-129: 135.0ms, 52.4KB
+### 13. 404/ERROR HANDLING CHECK
+----------------------------------------
+  [404] /nonexistent-page
+  [404] /products/does-not-exist
+  [200] /collections/invalid
+  [200] /admin
+### 14. MIXED CONTENT CHECK
+----------------------------------------
+  ✓ No mixed content found
+### 15. MOBILE RESPONSIVENESS META
+----------------------------------------
+  ✓ Viewport meta: width=device-width, initial-scale=1
+### 16. CART FUNCTIONALITY CHECK
+----------------------------------------
+  /cart page status: 200
+### 17. FAVICON CHECK
+----------------------------------------
+  ✓ Favicon: /favicon.ico?favicon.2vob68tjqpejf.ico
+### 18. HEADING HIERARCHY CHECK
+----------------------------------------
+  H1 tags: 1
+  H2 tags: 4
+    H1: Promilaa
+============================================================
+TEST COMPLETE
+============================================================
+[32mubuntu@sandbox:~$ [0m

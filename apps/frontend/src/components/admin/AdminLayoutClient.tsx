@@ -71,17 +71,17 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
   useEffect(() => {
     if (hasHydrated) {
       if (!user || (user.role !== 'ADMIN' && user.role !== 'STAFF')) {
-        router.push('/login');
+        router.replace('/login?redirect=/admin');
       }
     }
   }, [hasHydrated, user, router]);
 
   if (!hasHydrated) {
     return (
-      <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center font-medium">
+      <div className="min-h-screen bg-white text-slate-900 flex items-center justify-center font-medium">
         <div className="flex items-center gap-3">
-          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-          <span>Authenticating Session...</span>
+          <div className="w-5 h-5 border-2 border-slate-900 border-t-transparent rounded-full animate-spin"></div>
+          <span className="text-sm">Verifying access...</span>
         </div>
       </div>
     );
@@ -108,7 +108,7 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
         </button>
       </header>
 
-      {/* SIDEBAR NAVIGATION (Desktop Sidebar + Mobile Collapsible Drawer) */}
+      {/* SIDEBAR NAVIGATION */}
       <aside
         className={`${
           mobileMenuOpen ? "block" : "hidden"

@@ -20,7 +20,9 @@ export default function ReelVideo({ src, label, tag }: ReelVideoProps) {
         onMouseEnter={(e) => e.currentTarget.play()}
         onMouseLeave={(e) => e.currentTarget.pause()}
         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-      />
+      >
+        <track kind="captions" srcLang="en" label="Captions off" />
+      </video>
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 p-6 flex flex-col justify-between pointer-events-none">
         <div className="flex justify-between items-center">
           <span className="px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-semibold">

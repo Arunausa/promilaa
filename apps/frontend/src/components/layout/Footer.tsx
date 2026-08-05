@@ -121,12 +121,20 @@ export default function Footer() {
           </div>
 
           <div className="pt-4 border-t border-slate-900">
-            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest block mb-2">We Accept</span>
-            <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold text-slate-300">
-              <span className="px-2 py-1 bg-slate-900 border border-slate-800 rounded">bKash</span>
-              <span className="px-2 py-1 bg-slate-900 border border-slate-800 rounded">Nagad</span>
-              <span className="px-2 py-1 bg-slate-900 border border-slate-800 rounded">Rocket</span>
-              <span className="px-2 py-1 bg-slate-900 border border-slate-800 rounded">Cash On Delivery</span>
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block mb-2.5">We Accept Secure Payments</span>
+            <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-pink-950/80 border border-pink-700/60 text-pink-300 rounded shadow-sm">
+                <span className="w-2 h-2 rounded-full bg-pink-500 animate-pulse"></span> bKash
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-950/80 border border-orange-700/60 text-orange-300 rounded shadow-sm">
+                <span className="w-2 h-2 rounded-full bg-orange-500"></span> Nagad
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-purple-950/80 border border-purple-700/60 text-purple-300 rounded shadow-sm">
+                <span className="w-2 h-2 rounded-full bg-purple-500"></span> Rocket
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-950/80 border border-amber-700/60 text-amber-300 rounded shadow-sm">
+                <span className="w-2 h-2 rounded-full bg-amber-500"></span> Cash On Delivery
+              </span>
             </div>
           </div>
         </div>

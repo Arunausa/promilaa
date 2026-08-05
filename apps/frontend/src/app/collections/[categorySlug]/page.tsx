@@ -67,16 +67,40 @@ export async function generateMetadata({
   const categorySlug = resolvedParams.categorySlug;
   const categoryTitle = categorySlug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
   const title = `${categoryTitle} Collection | Promilaa Ethnic Wear BD`;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://promilaa.vercel.app';
   
+  const categoryImages: Record<string, string> = {
+    'kurti': '/media/kurti/1.jpeg',
+    'one-piece': '/media/one_piece/1.jpeg',
+    'two-piece': '/media/two_piece/1.jpeg',
+    'three-piece': '/media/three_piece/1.jpeg',
+    'festive': '/media/festive/1.jpeg',
+  };
+  const ogImage = `${siteUrl}${categoryImages[categorySlug] || '/media/three_piece/1.jpeg'}`;
+
   return {
     title,
     description: `Shop premium ${categoryTitle} designs at Promilaa Bangladesh. High quality fabrics, authentic Bangladeshi ethnic wear at affordable prices.`,
     openGraph: {
       title,
       description: `Shop the latest ${categoryTitle} fashion at Promilaa Bangladesh.`,
-      url: `https://promilaa.com/collections/${categorySlug}`,
+      url: `${siteUrl}/collections/${categorySlug}`,
       type: "website",
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: categoryTitle,
+        }
+      ]
     },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: `Shop the latest ${categoryTitle} fashion at Promilaa Bangladesh.`,
+      images: [ogImage]
+    }
   };
 }
 

@@ -21,7 +21,7 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://promilaa.com';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://promilaa.vercel.app';
 
 // OPTIMIZED FOR PERFECT SEO (TITLE 30-60 CHARS, META DESC 120-160 CHARS) & HREFLANG
 export const metadata: Metadata = {

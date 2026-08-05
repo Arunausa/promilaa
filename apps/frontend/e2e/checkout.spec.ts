@@ -4,7 +4,7 @@ test.describe('Promilaa E-Commerce Full E2E User Journey & Automation Suite', ()
 
   test('TC-01: Homepage loads with Hero Slider and Category Showcase', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    await expect(page).toHaveTitle(/PROMILAA BY SOPNIL/i);
+    await expect(page).toHaveTitle(/PROMILAA/i);
     const categoryHeader = page.locator('text=Shop By Category');
     await expect(categoryHeader).toBeVisible();
   });

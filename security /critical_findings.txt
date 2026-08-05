@@ -1,0 +1,27 @@
+CRITICAL FINDINGS FROM AUTH TESTING:
+
+1. SIGNUP WITHOUT VERIFICATION:
+   - /api/auth/signup accepts any email/password and creates user instantly
+   - No email verification required
+   - Returns JWT token immediately
+   - Response includes: user ID, name, email, role (CUSTOMER), accessToken
+   - JWT token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+   - No rate limiting on signup
+   - No CAPTCHA on signup
+
+2. LOGIN ENDPOINT:
+   - Returns same "Invalid email or password" for both non-existent emails and wrong passwords
+   - This is GOOD (prevents user enumeration)
+   - Rate limiting detected after rapid requests
+   - Empty fields properly rejected with 400
+
+3. JWT TOKEN EXPOSED IN RESPONSE:
+   - Token returned directly in JSON response body
+   - Should be in HttpOnly cookie instead
+   - Token can be stored in localStorage (XSS vulnerable)
+
+4. ADMIN PAGE:
+   - /admin returns 200 with "Authenticating Session..." message
+   - No redirect to login
+   - Page is accessible without auth
+   - Could leak admin functionality info
