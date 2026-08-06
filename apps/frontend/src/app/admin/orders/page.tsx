@@ -45,10 +45,18 @@ export default function AdminOrders() {
 
   const handleSendToSteadfast = async (order: any) => {
     setCourierLoadingId(order.id);
-    await new Promise(r => setTimeout(r, 1200));
-    setOrders(orders.map(o => o.id === order.id ? { ...o, courierStatus: 'BOOKED_STEADFAST', trackingCode: `ST-${Math.floor(100000 + Math.random() * 900000)}` } : o));
-    setCourierLoadingId(null);
-    alert(`Steadfast Courier Booking Successful! Tracking Code: ST-${Math.floor(100000 + Math.random() * 900000)}`);
+    try {
+      const data = await apiFetch<{ success: boolean; trackingCode: string; message: string }>("/api/admin/courier/steadfast", {
+        method: "POST",
+        body: JSON.stringify({ orderId: order.id }),
+      });
+      setOrders(orders.map(o => o.id === order.id ? { ...o, status: 'SHIPPED', courierStatus: 'BOOKED_STEADFAST', trackingCode: data.trackingCode } : o));
+      alert(data.message || `Steadfast Courier Booking Successful! Tracking Code: ${data.trackingCode}`);
+    } catch (err: any) {
+      alert(err?.message || "Failed to book Steadfast courier");
+    } finally {
+      setCourierLoadingId(null);
+    }
   };
 
   const handlePrintMemo = (order: any) => {

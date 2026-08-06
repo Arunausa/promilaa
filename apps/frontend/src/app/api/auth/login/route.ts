@@ -61,7 +61,7 @@ export async function POST(req: Request) {
       { expiresIn: '7d' }
     );
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       user: {
         id: user.id,
         name: user.name,
@@ -70,6 +70,17 @@ export async function POST(req: Request) {
       },
       accessToken: token,
     });
+
+    // Set HttpOnly token cookie for edge proxy middleware access
+    response.cookies.set('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60,
+      path: '/',
+    });
+
+    return response;
   } catch (error) {
     console.error('Login error:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });

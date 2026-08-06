@@ -8,19 +8,16 @@ export interface SMSOptions {
   message: string;
 }
 
-export async function sendOrderConfirmationSMS(phone: string, orderNumber: string, totalAmount: number): Promise<boolean> {
+export async function sendSMS(phone: string, message: string): Promise<boolean> {
   const cleanPhone = phone.trim();
   const smsToken = process.env.SMS_API_KEY || process.env.GREENWEB_TOKEN;
 
   if (!smsToken) {
-    console.log(`[SMS Engine] Gateway key not set. Simulated SMS to ${cleanPhone}: "আপনার প্রমিলা অর্ডার #${orderNumber} (৳${totalAmount}) সফলভাবে গ্রহণ করা হয়েছে।"`);
+    console.log(`[SMS Engine (Gateway Key Pending)] To ${cleanPhone}: "${message}"`);
     return true;
   }
 
-  const message = `ধন্যবাদ! আপনার প্রমিলা ইথনিক ওয়্যার অর্ডার #${orderNumber} (৳${totalAmount}) সফলভাবে গৃহীত হয়েছে। খুব শীঘ্রই পার্সেল কুরিয়ারে পাঠানো হবে।`;
-
   try {
-    // Greenweb API Integration
     const res = await fetch('https://api.greenweb.com.bd/api.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -32,12 +29,17 @@ export async function sendOrderConfirmationSMS(phone: string, orderNumber: strin
     });
 
     if (res.ok) {
-      console.log(`[SMS Engine] Order confirmation SMS sent to ${cleanPhone}`);
+      console.log(`[SMS Engine Success] Sent to ${cleanPhone}`);
       return true;
     }
   } catch (error) {
-    console.error('[SMS Engine] Error sending SMS:', error);
+    console.error('[SMS Engine Error]', error);
   }
 
   return false;
+}
+
+export async function sendOrderConfirmationSMS(phone: string, orderNumber: string, totalAmount: number): Promise<boolean> {
+  const message = `ধন্যবাদ! আপনার প্রমিলা ইথনিক ওয়্যার অর্ডার #${orderNumber} (৳${totalAmount}) সফলভাবে গৃহীত হয়েছে। খুব শীঘ্রই পার্সেল কুরিয়ারে পাঠানো হবে।`;
+  return sendSMS(phone, message);
 }

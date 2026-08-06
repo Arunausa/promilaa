@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { checkPhoneNumberFraud } from '@/lib/fraudChecker';
+import { sendOrderConfirmationSMS } from '@/lib/smsService';
 import crypto from 'crypto';
 
 // RATE LIMITER: 10 checkout orders per 15 minutes per IP
@@ -131,7 +132,8 @@ export async function POST(req: Request) {
       return newOrder;
     });
 
-    // Run Multi-Courier Fraud Checker Engine (Non-blocking async call for performance)
+    // Send Instant SMS Confirmation & Run Multi-Courier Fraud Checker (Non-blocking)
+    sendOrderConfirmationSMS(phone, result.orderNumber, Number(result.total)).catch(() => {});
     checkPhoneNumberFraud(phone, result.id).catch((err) => {
       console.error('[Fraud Engine Async Error]', err);
     });
