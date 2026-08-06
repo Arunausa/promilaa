@@ -29,9 +29,21 @@ async function getCategoryProducts(categorySlug: string, searchParams: any) {
 
     let products = await prisma.product.findMany({
       where,
-      include: {
-        images: { orderBy: { position: 'asc' } },
-        variants: true,
+      take: 24,
+      select: {
+        id: true,
+        slug: true,
+        name: true,
+        basePrice: true,
+        compareAtPrice: true,
+        images: {
+          take: 2,
+          orderBy: { position: 'asc' },
+          select: { id: true, url: true, altText: true },
+        },
+        variants: {
+          select: { id: true, stock: true },
+        },
         category: { select: { name: true, slug: true } },
       },
       orderBy: searchParams.sort === 'price-asc' 

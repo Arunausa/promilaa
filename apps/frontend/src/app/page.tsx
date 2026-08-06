@@ -13,10 +13,19 @@ const getFeaturedProducts = unstable_cache(
     try {
       const products = await prisma.product.findMany({
         where: { isPublished: true },
-        take: 16,
-        include: {
-          images: { orderBy: { position: 'asc' } },
-          variants: true,
+        take: 12,
+        select: {
+          id: true,
+          slug: true,
+          name: true,
+          basePrice: true,
+          compareAtPrice: true,
+          isFeatured: true,
+          images: {
+            take: 2,
+            orderBy: { position: 'asc' },
+            select: { id: true, url: true, altText: true },
+          },
           category: { select: { name: true, slug: true } },
         },
         orderBy: { createdAt: 'desc' },

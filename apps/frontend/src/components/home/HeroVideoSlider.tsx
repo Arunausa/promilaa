@@ -1,27 +1,27 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
 
 const slides = [
   {
     src: "/media/video/1.mp4",
-    title: "Promilaa",
-    tag: "Eid & Festive Collection '26",
-    subtitle: "Elevating Bangladeshi Women's Fashion with Handcrafted Kurtis, 1-Piece, 2-Piece & 3-Piece Ethnic Masterpieces.",
+    title: "EID & FESTIVE COLLECTION '26",
+    subtitle: "Elevating Bangladeshi Women's Fashion with Handcrafted Kurtis, 1-Piece, 2-Piece & 3-Piece Masterpieces.",
+    tag: "Festive Edition Vol. 4",
   },
   {
     src: "/media/video/2.mp4",
-    title: "Boutique Elegance",
-    tag: "Exquisite Craftsmanship",
-    subtitle: "Experience authentic Bangladeshi weaving, delicate embroidery, and royal silk fabrics.",
+    title: "LUXURY BOUTIQUE KURTIS",
+    subtitle: "Hand-Picked Cotton, Silk & Jacquard Designer Wear Craftsmanship for Daily Office & Formal Elegance.",
+    tag: "Boutique Signature",
   },
   {
     src: "/media/video/3.mp4",
-    title: "South Asian Royal Wear",
-    tag: "New Season Arrivals",
-    subtitle: "Designed for the modern Bangladeshi woman who values heritage, comfort, and luxury.",
+    title: "TRADITIONAL 3-PIECE SUITS",
+    subtitle: "Zari Embroidered Dupatta & Lawn Kameez Ensembles Crafted for Weddings & Special Occasions.",
+    tag: "Royalty Collection",
   },
 ];
 
@@ -29,52 +29,44 @@ export default function HeroVideoSlider() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
-  const handleVideoEnded = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
-  };
-
-  // HARDENED MOBILE AUTOPLAY ENGINE (iOS Safari & Android Chrome Compatibility)
+  // Force Immediate Video Stream Playback on Slide Change and Initial Render
   useEffect(() => {
-    const playCurrentVideo = () => {
-      videoRefs.current.forEach((vid, i) => {
-        if (vid) {
-          vid.muted = true;
-          vid.defaultMuted = true;
-          vid.setAttribute("playsinline", "true");
-          vid.setAttribute("webkit-playsinline", "true");
-
-          if (i === currentIndex) {
-            const playPromise = vid.play();
-            if (playPromise !== undefined) {
-              playPromise.catch((err) => {
-                console.log("Mobile autoplay attempt retry:", err);
-              });
-            }
-          } else {
-            vid.pause();
+    slides.forEach((_, idx) => {
+      const vid = videoRefs.current[idx];
+      if (vid) {
+        vid.muted = true;
+        vid.setAttribute("playsinline", "true");
+        vid.setAttribute("webkit-playsinline", "true");
+        if (idx === currentIndex) {
+          vid.currentTime = 0;
+          const playPromise = vid.play();
+          if (playPromise !== undefined) {
+            playPromise.catch(() => {});
           }
         }
-      });
-    };
+      }
+    });
+  }, [currentIndex]);
 
-    playCurrentVideo();
-
-    // Unlock mobile audio/video context on first user touch if low power mode blocked initial play
-    const handleTouch = () => {
-      const activeVid = videoRefs.current[currentIndex];
-      if (activeVid && activeVid.paused) {
-        activeVid.play().catch(() => {});
+  // Fallback interaction listener for instant autoplay unlock on mobile
+  useEffect(() => {
+    const handleUnlock = () => {
+      const currentVid = videoRefs.current[currentIndex];
+      if (currentVid && currentVid.paused) {
+        currentVid.play().catch(() => {});
       }
     };
-
-    window.addEventListener("touchstart", handleTouch, { passive: true, once: true });
-    window.addEventListener("click", handleTouch, { passive: true, once: true });
-
+    window.addEventListener("touchstart", handleUnlock, { once: true });
+    window.addEventListener("scroll", handleUnlock, { once: true });
     return () => {
-      window.removeEventListener("touchstart", handleTouch);
-      window.removeEventListener("click", handleTouch);
+      window.removeEventListener("touchstart", handleUnlock);
+      window.removeEventListener("scroll", handleUnlock);
     };
   }, [currentIndex]);
+
+  const handleVideoEnded = () => {
+    setCurrentIndex((prev) => (prev + 1) % slides.length);
+  };
 
   const goToNext = () => {
     setCurrentIndex((prev) => (prev + 1) % slides.length);
@@ -86,32 +78,36 @@ export default function HeroVideoSlider() {
 
   return (
     <section className="relative h-[92vh] min-h-[680px] w-full bg-slate-950 overflow-hidden flex items-center justify-center">
-      {/* 100% Pure Video Background Layer (Mobile Safari & Android AutoPlay Optimized) */}
+      {/* 100% Pure Video Background Engine (Zero Latency & Hardware GPU Accelerated) */}
       {slides.map((item, idx) => (
-        <video
+        <div
           key={item.src}
-          ref={(el) => {
-            videoRefs.current[idx] = el;
-          }}
-          muted
-          playsInline
-          autoPlay
-          preload="auto"
-          onEnded={handleVideoEnded}
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out ${
-            idx === currentIndex ? "opacity-100 scale-105" : "opacity-0 scale-100 pointer-events-none"
+          className={`absolute inset-0 w-full h-full transform-gpu will-change-transform transition-opacity duration-700 ease-in-out ${
+            idx === currentIndex ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
           }`}
         >
-          <source src={item.src} type="video/mp4" />
-          <track kind="captions" srcLang="en" label="Captions off" />
-        </video>
+          <video
+            ref={(el) => {
+              videoRefs.current[idx] = el;
+            }}
+            src={item.src}
+            muted
+            playsInline
+            autoPlay
+            preload="auto"
+            onEnded={handleVideoEnded}
+            className="w-full h-full object-cover scale-105 transform-gpu"
+          >
+            <track kind="captions" srcLang="en" label="Captions off" />
+          </video>
+        </div>
       ))}
 
-      {/* Dark Gradient Overlay for High Text Contrast */}
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/40 z-10 pointer-events-none" />
+      {/* Dark Overlay for High Text Contrast */}
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/40 z-20 pointer-events-none" />
 
       {/* Content */}
-      <div key={currentIndex} className="relative z-20 text-center text-white px-4 max-w-4xl mx-auto mt-12 transition-all duration-500">
+      <div key={currentIndex} className="relative z-30 text-center text-white px-4 max-w-4xl mx-auto mt-12 transition-all duration-500">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-amber-200 text-xs font-semibold uppercase tracking-widest mb-6 shadow-lg">
           <Sparkles className="w-3.5 h-3.5 text-amber-300" />
           {slides[currentIndex].tag}
@@ -145,20 +141,20 @@ export default function HeroVideoSlider() {
       <button
         onClick={goToPrev}
         aria-label="Previous Video"
-        className="absolute left-4 md:left-8 z-30 p-3 min-w-[48px] min-h-[48px] flex items-center justify-center rounded-full bg-black/40 hover:bg-black/70 text-white border border-white/30 backdrop-blur-md transition-all"
+        className="absolute left-4 md:left-8 z-40 p-3 min-w-[48px] min-h-[48px] flex items-center justify-center rounded-full bg-black/40 hover:bg-black/70 text-white border border-white/30 backdrop-blur-md transition-all"
       >
         <ChevronLeft className="w-6 h-6" />
       </button>
       <button
         onClick={goToNext}
         aria-label="Next Video"
-        className="absolute right-4 md:right-8 z-30 p-3 min-w-[48px] min-h-[48px] flex items-center justify-center rounded-full bg-black/40 hover:bg-black/70 text-white border border-white/30 backdrop-blur-md transition-all"
+        className="absolute right-4 md:right-8 z-40 p-3 min-w-[48px] min-h-[48px] flex items-center justify-center rounded-full bg-black/40 hover:bg-black/70 text-white border border-white/30 backdrop-blur-md transition-all"
       >
         <ChevronRight className="w-6 h-6" />
       </button>
 
       {/* Slide Indicators / Dots */}
-      <div className="absolute bottom-8 z-30 flex items-center gap-3">
+      <div className="absolute bottom-8 z-40 flex items-center gap-3">
         {slides.map((_, i) => (
           <button
             key={i}

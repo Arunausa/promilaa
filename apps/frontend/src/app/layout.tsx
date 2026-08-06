@@ -156,6 +156,11 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preload" href="/media/video/1.mp4" as="video" type="video/mp4" />
+        <link rel="preload" href="/media/video/2.mp4" as="video" type="video/mp4" />
+        <link rel="preload" href="/media/video/3.mp4" as="video" type="video/mp4" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(globalSchemas) }}
